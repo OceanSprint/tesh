@@ -16,7 +16,7 @@ Not anymore.
 ## Syntax
 
 ~~~
- ```shell-session tesh-session="helloworld" tesh-exitcodes="0 1 0" tesh-setup="foo.sh" tesh-ps1="#"
+ ```shell-session tesh-session="helloworld" tesh-exitcodes="0 1 0" tesh-setup="foo.sh" tesh-ps1="#" tesh-os="linux"
 $ git --version
 git version 2...
 
@@ -36,13 +36,14 @@ The first line of the code block allows you to set a few directives:
 - ``tesh-exitcodes`` optional list of exit codes in the order of commands executed inside the code block.
 - ``tesh-setup`` optional filename allows you to run a script to setup the environment without showing polluting the Markdown file.
 - ``tesh-ps1`` sets additional PS1 prompts that are supported besides ``$``.
+- ``tesh-os`` optional parameter to specify on which OSes should this session block be tested
 - ``...`` used in a newline is a wildcard matching 0 or more lines
 - ``...`` used inside a line is a wildcard matching 0 or more chars
 
 
 ## Usage
 
-```shell-session tesh="readme" test-exitcode="1"
+```shell-session tesh="readme" tesh-exitcode="1"
 $ tesh DIR(S)
 Running foobar.md
   Running helloworld
