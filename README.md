@@ -65,7 +65,7 @@ Running baz.md
 | | tesh | [mdsh](https://github.com/zimbatm/mdsh) | [pandoc filters](http://www.chriswarbo.net/projects/activecode/index.html) |
 |------------------------------------------|---|---|---|
 | Execute shell session                    | ✔️ | ✔️ | ✔️ |
-| Modify markdown file with the new output | ✖️ | ✔️ | ✔️ |
+| Modify markdown file with the new output | 🚧[<sub>[1]</sub>](https://github.com/OceanSprint/tesh/issues/6) | ✔️ | ✔️ |
 | Shared session between code blocks       | ✔️ | ✖️ | ✖️ |
 | Custom PS1 prompts                       | ✔️ | ✖️ | ✖️ |
 | Assert non-zero exit codes               | ✔️ | ✖️ | ✖️ |
