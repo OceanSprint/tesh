@@ -1,4 +1,4 @@
-"""TODO."""
+"""Initialize the tesh command."""
 
 
 def hello(name: str = "foo") -> None:
