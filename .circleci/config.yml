@@ -89,10 +89,6 @@ jobs:
 
       - run_tests
 
-      - run:
-          name: Upload test durations to BlueRacer.io
-          command: |
-            bash <(curl -s https://app.blueracer.io/upload)
   test_310:
     <<: *defaults
     docker:
