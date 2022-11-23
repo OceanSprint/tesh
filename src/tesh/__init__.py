@@ -1,15 +1,17 @@
 """Initialize the tesh command."""
 
-import click
 from pathlib import Path
+from tesh.extract import extract, extract_blocks
+from tesh.test import test
 
-from .extract import extract
+import click
 
 
 @click.command()
-@click.argument('paths', nargs=-1)
-@click.option('--ext', default="md", help='Extension of files to extract from.')
-def run(paths, ext):
+@click.argument("paths", nargs=-1)
+@click.option("--ext", default="md", help="Extension of files to extract from.")
+@click.option("--verbose", is_flag=True, default=False)
+def run(paths, ext, verbose):
     filenames = []
 
     # collect all markdown files
@@ -17,7 +19,7 @@ def run(paths, ext):
         if path.endswith(ext):
             filenames.append(path)
         else:
-            for path in Path(path).rglob('*.' + ext):
+            for path in Path(path).rglob("*." + ext):
                 filenames.append(path.name)
 
     for filename in filenames:
@@ -27,8 +29,5 @@ def run(paths, ext):
 
         for session in sessions:
             print("  ✨ Running", session.id)
-            #print("   ", session)
-
-            # TODO: turn sessions into a format for pexpect
-            # TODO: run pexpect
->>>>>>> 6f528ec (extract)
+            extract_blocks(session, verbose)
+            test(filename, session, verbose)

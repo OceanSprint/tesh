@@ -3,10 +3,20 @@
 from dataclasses import dataclass, field
 import platform
 import re
+import typing as t
+
+@dataclass
+class Block:
+    """Shell sessions are constructed of blocks. Each block has a
+    line of command followed by one or more lines of output."""
+
+    command: t.Optional[str] = None
+    output: t.List[str] = field(default_factory=lambda: [])
 
 @dataclass
 class ShellSession:
-    code: str
+    lines: list[str]
+    blocks: list[Block]
     id: str
     ps1: str | None = None
     setup: str | None = None
@@ -36,7 +46,7 @@ def extract(f, max_num_lines: int = 100000) -> list[ShellSession]:
             directives = dict(directives)
 
             # read the block
-            code_block = []
+            code_lines = []
             while True:
                 line = f.readline()
                 lsline = line.lstrip()
@@ -53,11 +63,11 @@ def extract(f, max_num_lines: int = 100000) -> list[ShellSession]:
                 if lsline[:num_leading_backticks] == "`" * num_leading_backticks:
                     break
 
-                if line == 1:
+                if k == 1:
                   num_leading_spaces = len(line) - len(lsline)
 
                 # remove leading spaces
-                code_block.append(line[num_leading_spaces:])
+                code_lines.append(line[num_leading_spaces:])
                 k += 1
 
             current_platform = platform.system().lower()
@@ -65,7 +75,7 @@ def extract(f, max_num_lines: int = 100000) -> list[ShellSession]:
                 id_ = directives['session']
                 if id_ in sessions:
                     session = sessions[id_]
-                    session.code += "\n" + "\n".join(code_block)
+                    session.lines += code_lines
 
                     ps1 = directives.get('ps1', None)
                     if ps1 and session.ps1:
@@ -86,7 +96,8 @@ def extract(f, max_num_lines: int = 100000) -> list[ShellSession]:
 
                 else:
                     sessions[directives['session']] = ShellSession(
-                        code="\n".join(code_block),
+                        lines=code_lines,
+                        blocks=[],
                         id = directives['session'],
                         ps1 = directives.get('ps1', None),
                         exitcodes = parse_exitcodes(directives.get('exitcodes', "")),
@@ -94,6 +105,24 @@ def extract(f, max_num_lines: int = 100000) -> list[ShellSession]:
                     )
 
     return list(sessions.values())
+
+def extract_blocks(session: ShellSession, verbose: bool) -> None:
+    prompt = re.compile(r"^(\$|{ps1}) ".format(ps1=session.ps1))
+    new_block = Block()
+    blocks = []
+
+    for line in session.lines:
+        if prompt.match(line):
+            if new_block.command:
+                blocks.append(new_block)
+            new_block = Block()
+            new_block.command = re.sub(prompt, "", line).strip()
+        elif not line.strip():
+            continue
+        else:
+            new_block.output.append(line.strip())
+    blocks.append(new_block)
+    session.blocks = blocks
 
 def parse_exitcodes(exitcodes: str) -> list[int]:
     exitcodes = exitcodes.split()
