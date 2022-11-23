@@ -811,6 +811,18 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "yamllint"
+version = "1.28.0"
+description = "A linter for YAML files."
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+pathspec = ">=0.5.3"
+pyyaml = "*"
+
+[[package]]
 name = "zipp"
 version = "3.10.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -825,7 +837,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "307a0380e103fecdbdc772d8fec518d5aeb76187ac6b6f3ddd7b16428817da34"
+content-hash = "020dd8e602097173ff19eaa558eab2219de4e0a6ba4197afdfc0c8896f8b7420"
 
 [metadata.files]
 atomicwrites = [
@@ -1270,6 +1282,10 @@ virtualenv = [
 ]
 wmctrl = [
     {file = "wmctrl-0.4.tar.gz", hash = "sha256:66cbff72b0ca06a22ec3883ac3a4d7c41078bdae4fb7310f52951769b10e14e0"},
+]
+yamllint = [
+    {file = "yamllint-1.28.0-py2.py3-none-any.whl", hash = "sha256:89bb5b5ac33b1ade059743cf227de73daa34d5e5a474b06a5e17fc16583b0cf2"},
+    {file = "yamllint-1.28.0.tar.gz", hash = "sha256:9e3d8ddd16d0583214c5fdffe806c9344086721f107435f68bad990e5a88826b"},
 ]
 zipp = [
     {file = "zipp-3.10.0-py3-none-any.whl", hash = "sha256:4fcb6f278987a6605757302a6e40e896257570d11c51628968ccb2a47e80c6c1"},

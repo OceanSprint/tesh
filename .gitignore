@@ -6,6 +6,7 @@
 
 # Coverage reports
 .coverage
+cov.xml
 htmltypecov/
 typecov/
 junit.xml

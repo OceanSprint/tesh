@@ -8,14 +8,17 @@ authors = [
 ]
 license = "MIT"
 
+
 [tool.poetry.scripts]
 tesh = "tesh:hello"
+
 
 [tool.poetry.dependencies]
 python = "^3.9"
 
 click = "*"
 pexpect = "*"
+
 
 [tool.poetry.dev-dependencies]
 autoflake = "*"
@@ -52,7 +55,31 @@ pytest-randomly = "*"
 pytest-socket = "*"
 pyupgrade = "*"
 typecov = "*"
+yamllint = "*"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.autoflake]
+remove-all-unused-imports = true
+in-place = true
+recursive = true
+
+
+[tool.isort]
+atomic=true
+force_alphabetical_sort=true
+force_single_line=true
+line_length=88
+
+
+[tool.mypy]
+follow_imports = "silent"
+check_untyped_defs = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+linecount_report = "./typecov"

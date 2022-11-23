@@ -1,5 +1,5 @@
 
-# tesh [tɛʃ] - TEstable SHell sessions in Markdown 
+# tesh [tɛʃ] - TEstable SHell sessions in Markdown
 
 Showing shell interactions how to run a tool is useful for teaching and explaining.
 
@@ -50,7 +50,7 @@ Running foobar.md
 Running baz.md
   Running test1
   Running test2 ... FAILED
-    
+
     Expected:
       $ git foo
       git: 'bar' is not a git command

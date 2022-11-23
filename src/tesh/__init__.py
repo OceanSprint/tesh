@@ -1,6 +1,6 @@
 """TODO."""
 
 
-def hello(name="foo"):
+def hello(name: str = "foo") -> None:
     """Hello world."""
-    print(f"Hello {name}")
+    print(f"Hello {name}")  # noqa: T201  # pragma:no cover

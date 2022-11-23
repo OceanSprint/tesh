@@ -32,8 +32,7 @@ type: types
 
 .PHONY: types
 types: .
-	@poetry run mypy pyramid_openapi3
-	@cat ./typecov/linecount.txt
+	@poetry run mypy src/tesh
 	@poetry run typecov 100 ./typecov/linecount.txt
 
 
