@@ -7,10 +7,13 @@ authors = [
   "Nejc Zupan",
 ]
 license = "MIT"
+packages = [
+  { include = "tesh", from = "src" },
+]
 
 
 [tool.poetry.scripts]
-tesh = "tesh:hello"
+tesh = "tesh:run"
 
 
 [tool.poetry.dependencies]

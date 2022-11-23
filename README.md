@@ -1,4 +1,3 @@
-
 # tesh [tɛʃ] - TEstable SHell sessions in Markdown
 
 Showing shell interactions how to run a tool is useful for teaching and explaining.
@@ -36,7 +35,7 @@ The first line of the code block allows you to set a few directives:
 - ``tesh-exitcodes`` optional list of exit codes in the order of commands executed inside the code block.
 - ``tesh-setup`` optional filename allows you to run a script to setup the environment without showing polluting the Markdown file.
 - ``tesh-ps1`` sets additional PS1 prompts that are supported besides ``$``.
-- ``tesh-os`` optional parameter to specify on which OSes should this session block be tested
+- ``tesh-platform`` optional parameter to specify on which platforms should this session block be tested. Examples: linux, darwin, windows
 - ``...`` used in a newline is a wildcard matching 0 or more lines
 - ``...`` used inside a line is a wildcard matching 0 or more chars
 
