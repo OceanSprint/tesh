@@ -1,0 +1,150 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+# yamllint disable rule:line-length
+version: 2.1
+
+defaults: &defaults
+    working_directory: ~/repo
+    docker:
+      - image: cimg/python:3.11
+
+workflows:
+  version: 2
+  tesh:
+    jobs:
+      - test_39:
+          filters:
+            tags:
+              only: /.*/
+      - test_310:
+          filters:
+            tags:
+              only: /.*/
+      - test_311:
+          filters:
+            tags:
+              only: /.*/
+      - release:
+          requires:
+            - test_39
+            - test_310
+            - test_311
+          filters:
+            tags:
+              only: /[0-9]+\.[0-9]+(\.[0-9]+)?/
+            branches:
+              ignore: /.*/
+
+commands:
+  install_dependencies:
+    description: "Install dependencies"
+    parameters:
+      python_version:
+        type: string
+        default: "py311"
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
+
+      - run:
+          name: Install dependencies
+          command: |
+            poetry install
+      - save_cache:
+          paths:
+            - ./.venv
+          key: v1-dependencies-<< parameters.python_version >>-{{ checksum "poetry.lock" }}
+
+
+  run_tests:
+    description: "Run tests"
+    steps:
+
+      - run:
+          name: Run linters and unit tests
+          command: |
+            make lint all=true
+            make types
+            make unit
+
+      - store_artifacts:
+          path: htmlcov
+
+      - store_artifacts:
+          path: htmltypecov
+
+jobs:
+
+  test_311:
+    <<: *defaults
+
+    steps:
+      - checkout
+
+      - install_dependencies:
+          python_version: "py311"
+
+      - run_tests
+
+      - run:
+          name: Upload test durations to BlueRacer.io
+          command: |
+            bash <(curl -s https://app.blueracer.io/upload)
+  test_310:
+    <<: *defaults
+    docker:
+      - image: cimg/python:3.10
+
+    steps:
+      - checkout
+
+      - install_dependencies:
+          python_version: "py310"
+
+      - run_tests
+
+  test_39:
+    <<: *defaults
+    docker:
+      - image: cimg/python:3.9
+
+    steps:
+      - checkout
+
+      - install_dependencies:
+          python_version: "py39"
+
+      - run_tests
+
+
+  release:
+    <<: *defaults
+
+    # To test publishing to testpypi:
+    # * comment out `branches: ignore: /.*/` in workflows at the top of this file
+    # * comment out "verify git tag matches pyproject.toml version" below
+    # * uncomment POETRY_REPOSITORIES_TESTPYPI_URL
+    # * append `-r testpypi` to poetry publish command
+    environment:
+      POETRY_REPOSITORIES_TESTPYPI_URL: https://test.pypi.org/legacy/
+
+    steps:
+      - checkout
+
+      - install_dependencies:
+          python_version: "py311"
+
+      - run:
+          name: verify git tag matches pyproject.toml version
+          command: |
+            echo "$CIRCLE_TAG"
+            echo `poetry version --short`
+            [[ "$CIRCLE_TAG" == `poetry version --short` ]] && exit 0 || exit 1
+      # POETRY_PYPI_TOKEN_PYPI secret is set in CircleCI Project Settings
+      - run:
+          name: publish to pypi
+          command: |
+            poetry publish --build

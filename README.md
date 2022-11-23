@@ -60,6 +60,34 @@ Running baz.md
       git: 'foo' is not a git command
 ```
 
+## Developing `tesh`
+
+You need to have [poetry](https://python-poetry.org/) and Python 3.9 through 3.11 installed on your machine.
+
+Alternatively, if you use [nix](https://nix.dev/tutorials/declarative-and-reproducible-developer-environments), run `nix-shell` to drop into a shell that has everything prepared for development.
+
+Then you can run `make tests` to run all tests & checks. Additional `make` commands are available:
+
+```
+# run flake8 linters on changed files only
+$ make lint
+
+# run flake8 linters on all files
+$ make lint all=true
+
+# run mypy type checker
+$ make types
+
+# run unit tests
+$ make unit
+
+# run a subset of unit tests (regex find)
+$ make unit filter=foo
+
+# re-lock Python dependencies (for example after adding or removing one from pyproject.toml)
+$ make lock
+```
+
 
 ## Comparison with other tools
 

@@ -1,0 +1,17 @@
+# poetry env
+.venv
+
+# mypy
+.mypy_cache/
+
+# Coverage reports
+.coverage
+htmltypecov/
+typecov/
+junit.xml
+
+# support for fast reloading direnv
+.direnv
+
+# Editors
+.vscode
