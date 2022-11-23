@@ -1,5 +1,5 @@
 
-# tesh - TEstable SHell sessions in Markdown 
+# tesh [tɛʃ] - TEstable SHell sessions in Markdown 
 
 Showing shell interactions how to run a tool is useful for teaching and explaining.
 
