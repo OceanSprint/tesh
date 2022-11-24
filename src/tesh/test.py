@@ -37,6 +37,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
             shell.sendline(block.command)
 
             shell.expect(block.command.replace("$", r"\$"))
+
             shell.expect(r"\$ ")
 
             expected_match = (
@@ -77,7 +78,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 sys.exit(1)
 
 
-def write_fixtures(session):
+def write_fixtures(session: ShellSession) -> None:
     """Dump code block into a file."""
     for fixture in session.fixtures:
         # TODO: support directories

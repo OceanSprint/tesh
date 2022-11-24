@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass
 from dataclasses import field
+from pathlib import Path
+from pathlib import PosixPath
 
 import platform
 import re
@@ -24,7 +26,7 @@ class Block:
     Each block has a line of command followed by one or more lines of output.
     """
 
-    command: t.Optional[str] = None
+    command: str
     output: t.List[str] = field(default_factory=lambda: [])
 
 
@@ -137,7 +139,7 @@ def extract(
     return list(sessions.values())
 
 
-def fail(*msg):
+def fail(*msg: t.Union[str, t.List[t.Union[str, PosixPath]]]) -> None:
     """Print the failure and exit."""
     print("❌ Failed")  # noqa: ENC100
     print("    ", *msg)
@@ -147,14 +149,14 @@ def fail(*msg):
 def extract_blocks(session: ShellSession, verbose: bool) -> None:
     """Extract blocks from sessions."""
     prompt = re.compile(r"^(\$|{ps1}) ".format(ps1=session.ps1))
-    new_block = Block()
+    new_block = Block("")  # TODO: rewrite this
     blocks = []
 
     for line in session.lines:
         if prompt.match(line):
             if new_block.command:
                 blocks.append(new_block)
-            new_block = Block()
+            new_block = Block("")
             new_block.command = re.sub(prompt, "", line).strip()
         elif not line.strip():
             continue

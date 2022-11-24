@@ -30,7 +30,7 @@ def test_Block() -> None:
     Block(command="foo", output=["bar", "baz"])
 
     # minimal data
-    Block()
+    Block("foo")
 
 
 def test_ShellSession() -> None:
@@ -39,11 +39,11 @@ def test_ShellSession() -> None:
     # full data
     ShellSession(
         lines=["foo", "bar", "baz"],
-        blocks=[Block()],
+        blocks=[Block("foo")],
         id_="str",
         setup="foo.sh",
         exitcodes=[0, 1, 2],
     )
 
     # minimal data
-    ShellSession(lines=["foo", "bar", "baz"], blocks=[Block()], id_="str")
+    ShellSession(lines=["foo", "bar", "baz"], blocks=[Block("foo")], id_="str")
