@@ -15,14 +15,14 @@ Not anymore.
 ## Syntax
 
 ~~~
-```shell-session tesh-session="helloworld" tesh-exitcodes="0 1" tesh-setup="readme.sh" tesh-ps1="#" tesh-os="linux"
+``shell-session tesh-session="helloworld" tesh-exitcodes="0 1" tesh-setup="readme.sh" tesh-ps1="#" tesh-os="linux"
 $ tesh --version
 tesh, version 0.1...
 
 $ tesh --foo
 ...
 Error: No such option: --foo
-```
+``
 ~~~
 
 The first line of the code block allows you to set a few directives:

@@ -1,4 +1,4 @@
-# A Markdown file contained in a subfolder
+# A simple Markdown file
 
 ```shell-session tesh-session="foo"
 $ echo "foo"

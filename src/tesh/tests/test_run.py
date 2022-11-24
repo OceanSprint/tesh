@@ -40,18 +40,38 @@ def test_no_codeblocks() -> None:
     assert expected == result.output
 
 
-def test_multiple_codeblocks() -> None:
-    """Test pointing tesh to a Markdown file with multiple codeblocks."""
+def test_simple() -> None:
+    """Test pointing tesh to a simple Markdown file."""
     runner = CliRunner()
-    result = runner.invoke(run, "src/tesh/tests/fixtures/multiple_codeblocks.md")
+    result = runner.invoke(run, "src/tesh/tests/fixtures/folder/simple.md")
 
     assert result.exit_code == 0
 
     # fmt: off
     expected = (
 """
-📄 Checking src/tesh/tests/fixtures/multiple_codeblocks.md
-  ✨ Running foo
+📄 Checking src/tesh/tests/fixtures/folder/simple.md
+  ✨ Running foo  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_verbose() -> None:
+    """Test verbose output."""
+    runner = CliRunner()
+    result = runner.invoke(run, "--verbose src/tesh/tests/fixtures/folder/simple.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/folder/simple.md
+  ✨ Running foo         Block(command='echo "foo"', output=['foo'])
+✅ Passed
 """
     ).lstrip("\n")
     # fmt: on
@@ -69,8 +89,74 @@ def test_folder() -> None:
     # fmt: off
     expected = (
 """
-📄 Checking src/tesh/tests/fixtures/folder/contained.md
-  ✨ Running foo
+📄 Checking src/tesh/tests/fixtures/folder/simple.md
+  ✨ Running foo  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_multiple_codeblocks() -> None:
+    """Test pointing tesh to a Markdown file with multiple codeblocks."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/multiple_codeblocks.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/multiple_codeblocks.md
+  ✨ Running foo  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_fail() -> None:
+    """Test pointing tesh to a failing Markdown file."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/fail.md")
+
+    assert result.exit_code == 1
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/fail.md
+  ✨ Running foo  ❌ Failed
+
+         Expected:
+bar
+         Got:
+foo
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_exitcodes() -> None:
+    """Test pointing tesh to a Markdown file using exitcodes."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/exitcodes.md")
+
+    assert result.exit_code == 1
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/exitcodes.md
+  ✨ Running foo  ✅ Passed
+  ✨ Running bar  ❌ Failed
+
+         Expected exit code: 0
+         Got exit code: 1
 """
     ).lstrip("\n")
     # fmt: on

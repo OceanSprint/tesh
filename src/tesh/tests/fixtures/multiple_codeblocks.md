@@ -15,6 +15,6 @@ bar
 
 ```shell-session tesh-session="foo"
 $ echo "foo with empty line"
-foo
+foo with empty line
 
 ```
