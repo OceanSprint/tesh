@@ -40,6 +40,25 @@ def test_no_codeblocks() -> None:
     assert expected == result.output
 
 
+def test_multiple_codeblocks() -> None:
+    """Test pointing tesh to a Markdown file with multiple codeblocks."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/multiple_codeblocks.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/multiple_codeblocks.md
+  ✨ Running foo
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
 def test_folder() -> None:
     """Test pointing tesh to a folder and test that it reads the contained file."""
     runner = CliRunner()

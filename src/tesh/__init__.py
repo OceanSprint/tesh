@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from tesh.extract import extract
+from tesh.extract import extract_blocks
 
 import click
 import typing as t
@@ -36,5 +37,5 @@ def run(paths: t.Set[str], ext: str, verbose: bool) -> None:
 
         for session in sessions:
             print("  ✨ Running", session.id_)  # noqa: ENC100
-            # extract_blocks(session, verbose)
+            extract_blocks(session, verbose)
             # test(filename, session, verbose)
