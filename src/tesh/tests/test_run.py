@@ -72,7 +72,9 @@ def test_verbose() -> None:
     expected = (
 """
 📄 Checking src/tesh/tests/fixtures/folder/simple.md
-  ✨ Running foo         Block(command='echo "foo"', output=['foo'])
+  ✨ Running foo  :
+       Command: echo "foo"
+       Output: ['foo']
 ✅ Passed
 """
     ).lstrip("\n")
@@ -167,6 +169,84 @@ def test_exitcodes() -> None:
 
          Expected exit code: 0
          Got exit code: 1
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_exitcodes_multiple_blocks() -> None:
+    """Test failure if not all blocks specify exitcodes."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/exitcodes_multipleblocks.md")
+
+    assert result.exit_code == 1
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/exitcodes_multipleblocks.md
+  ✨ Running foo  ❌ Failed
+     If you're using exit codes for a session, you must specify them for all commands.
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_setup() -> None:
+    """Test using tesh-setup to prepare the session before running examples."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/setup.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/setup.md
+  ✨ Running foo  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_setup_nonexistent_file() -> None:
+    """Test tesh-setup failure if file does not exist."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/setup_fail.md")
+
+    assert result.exit_code == 1
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/setup_fail.md
+❌ Failed
+     Setup file does not exist: src/tesh/tests/fixtures/does_not_exist.sh
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
+
+
+def test_fixture() -> None:
+    """Test using tesh-fixture to dump a code block into a file for later use."""
+    runner = CliRunner()
+    result = runner.invoke(run, "src/tesh/tests/fixtures/fixture.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/fixture.md
+  ✨ Running foo  ✅ Passed
 """
     ).lstrip("\n")
     # fmt: on
