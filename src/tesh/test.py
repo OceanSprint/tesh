@@ -14,7 +14,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
     with Path(filename).parent:
         shell = pexpect.spawn(
             "bash --norc --noprofile",
-            env={"PS1": "$ ", "PATH": os.environ["PATH"]},
+            env={"PS1": "$ ", "PATH": os.environ["PATH"], "HOME": os.getcwd()},
         )
         shell.expect(r"\$ ")
         if session.setup:
