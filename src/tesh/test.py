@@ -22,7 +22,9 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
             shell.expect(r"\$ ")
         for index, block in enumerate(session.blocks):
             if verbose:
-                print("      ", block)
+                print()
+                print("      Command: ", block.command)
+                print("      Output: ", block.output)
 
             expected_output = "\n".join(block.output)
 
