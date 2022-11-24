@@ -2,11 +2,16 @@
 
 from pathlib import Path
 from tesh.extract import extract
+from tesh.extract import fail
 from tesh.extract import extract_blocks
-from tesh.test import test
+from tesh.test import test, write_fixtures
+from tesh.changedir import changedir
 
+import os.path
+import shutil
 import click
 import typing as t
+import tempfile
 
 
 @click.command()
@@ -37,7 +42,16 @@ def run(paths: t.Set[str], ext: str, verbose: bool) -> None:
             sessions = extract(f)
 
         for session in sessions:
-            print("  ✨ Running", session.id_, " ", end="")  # noqa: ENC100
-            extract_blocks(session, verbose)
-            test(filename, session, verbose)
-            print("✅ Passed")  # noqa: ENC100
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                tmpdir = Path(tmpdirname)
+                if session.setup:
+                    setup = Path(filename).parent / session.setup
+                    if not os.path.exists(setup):
+                        fail("Setup file does not exist:", setup)
+                    shutil.copyfile(setup, tmpdir / session.setup)
+                with changedir(tmpdir):
+                    print("  ✨ Running", session.id_, " ", end="")  # noqa: ENC100
+                    extract_blocks(session, verbose)
+                    write_fixtures(session)
+                    test(filename, session, verbose)
+                    print("✅ Passed")  # noqa: ENC100
