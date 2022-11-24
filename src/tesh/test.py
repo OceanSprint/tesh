@@ -23,11 +23,13 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
 
             expected_output = "\n".join(block.output)
 
-            # if "DEBUG" in expected_output:
-            #     print()
-            #     print("$ ", end="")
-            #     shell.send(block.command)
-            #     shell.interact()
+            # This is actually covered in test_debug() but coverage does not
+            # detect it because the test spawns a sub-shell
+            if "DEBUG" in expected_output:  # pragma: no cover
+                print()
+                print("$ ", end="")
+                shell.send(block.command)
+                shell.interact()
 
             shell.sendline(block.command)
 
