@@ -1,18 +1,20 @@
-import pexpect
-import os
-from pathlib import Path
+"""Run testable sessions line-by-line and assert the output."""
 
-def test(filename, session, verbose: bool):
-    with Path(filename).parent:
-        shell = pexpect.spawn(session.setup or 'sh')
-        for block in session.blocks:
-            if verbose:
-                print("      ", block)
-            shell.sendline(block.command)
+# import pexpect
+# import os
+# from pathlib import Path
 
-            if "DEBUG" in block.output:
-                shell.interact()
+# def test(filename, session, verbose: bool):
+#     with Path(filename).parent:
+#         shell = pexpect.spawn(session.setup or 'sh')
+#         for block in session.blocks:
+#             if verbose:
+#                 print("      ", block)
+#             shell.sendline(block.command)
 
-            shell.expect("\n".join(block.output).replace("...", ".*"))
+#             if "DEBUG" in block.output:
+#                 shell.interact()
 
-            # TODO: handle exit codes
+#             shell.expect("\n".join(block.output).replace("...", ".*"))
+
+#             # TODO: handle exit codes

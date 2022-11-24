@@ -64,6 +64,9 @@ Alternatively, if you use [nix](https://nix.dev/tutorials/declarative-and-reprod
 Then you can run `make tests` to run all tests & checks. Additional `make` commands are available:
 
 ```
+# run tesh on all Markdown files
+$ make tesh
+
 # run flake8 linters on changed files only
 $ make lint
 
