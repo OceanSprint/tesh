@@ -272,17 +272,6 @@ flake8 = ">=3.7"
 dev = ["flake8", "mypy", "pydocstyle", "pytest", "isort", "black"]
 
 [[package]]
-name = "flake8-mutable"
-version = "1.2.0"
-description = "mutable defaults flake8 extension"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-flake8 = "*"
-
-[[package]]
 name = "flake8-plone-hasattr"
 version = "1.0.0"
 description = "Checks for hasattr, which is considered harmful in Plone projects."
@@ -837,7 +826,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "020dd8e602097173ff19eaa558eab2219de4e0a6ba4197afdfc0c8896f8b7420"
+content-hash = "0b58d2ceb0e3f21bb0a1e60eceb726f77fbb5d8131fe2a8b92abb42aae1f3742"
 
 [metadata.files]
 atomicwrites = [
@@ -998,10 +987,6 @@ flake8-docstrings = [
 flake8-ensure-ascii = [
     {file = "flake8-ensure-ascii-1.0.0.tar.gz", hash = "sha256:9b965231a2dede024ea90f349c4e260ab24e92d0d23bc8ea8165def06912864f"},
     {file = "flake8_ensure_ascii-1.0.0-py3-none-any.whl", hash = "sha256:9cfb64217a682bc89f4c8d99c6f56e0afb739fb4ef7c91b5ab3b07782d109cea"},
-]
-flake8-mutable = [
-    {file = "flake8-mutable-1.2.0.tar.gz", hash = "sha256:ee9b77111b867d845177bbc289d87d541445ffcc6029a0c5c65865b42b18c6a6"},
-    {file = "flake8_mutable-1.2.0-py2-none-any.whl", hash = "sha256:38fd9dadcbcda6550a916197bc40ed76908119dabb37fbcca30873666c31d2d5"},
 ]
 flake8-plone-hasattr = [
     {file = "flake8-plone-hasattr-1.0.0.tar.gz", hash = "sha256:c7c5ddb93ec50d0910a7bedeedc5213bf02d3105f4f74ea651ca2e9ddda897fc"},

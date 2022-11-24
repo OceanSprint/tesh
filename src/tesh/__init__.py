@@ -11,6 +11,7 @@ import click
 @click.argument("paths", nargs=-1)
 @click.option("--ext", default="md", help="Extension of files to extract from.")
 @click.option("--verbose", is_flag=True, default=False)
+@click.version_option()
 def run(paths, ext, verbose):
     filenames = []
 

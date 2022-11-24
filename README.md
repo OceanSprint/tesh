@@ -15,17 +15,13 @@ Not anymore.
 ## Syntax
 
 ~~~
- ```shell-session tesh-session="helloworld" tesh-exitcodes="0 1 0" tesh-setup="foo.sh" tesh-ps1="#" tesh-os="linux"
-$ git --version
-git version 2...
+```shell-session tesh-session="helloworld" tesh-exitcodes="0 1" tesh-setup="readme.sh" tesh-ps1="#" tesh-os="linux"
+$ tesh --version
+tesh, version 0.1...
 
-$ git foo
-git: 'foo' is not a git command
-
-$ git status
-On branch master
+$ tesh --foo
 ...
-nothing to commit, working tree clean
+Error: No such option: --foo
 ```
 ~~~
 
