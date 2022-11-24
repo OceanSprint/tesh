@@ -20,3 +20,10 @@ ignore =
     E501,
 # T201: print found
     T201
+
+# in tests we often assert 📄 and ✨ and we don't want to per-line ignore them all the time
+# in tests we have multiline strings to assert tesh output and its fine
+# ENC100 Non ASCII encoding found
+# E122 continuation line missing indentation or outdented
+per-file-ignores =
+    test_*.py: ENC100, E122

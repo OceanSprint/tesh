@@ -28,7 +28,16 @@ def test_no_codeblocks() -> None:
     result = runner.invoke(run, "src/tesh/tests/fixtures/no_codeblocks.md")
 
     assert result.exit_code == 0
-    assert "📄 Checking src/tesh/tests/fixtures/no_codeblocks.md\n" == result.output
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/no_codeblocks.md
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
 
 
 def test_folder() -> None:
@@ -36,14 +45,15 @@ def test_folder() -> None:
     runner = CliRunner()
     result = runner.invoke(run, "src/tesh/tests/fixtures/folder")
 
-    # fmt: off
     assert result.exit_code == 0
+
+    # fmt: off
     expected = (
 """
 📄 Checking src/tesh/tests/fixtures/folder/contained.md
   ✨ Running foo
 """
-    )
+    ).lstrip("\n")
     # fmt: on
 
-    assert expected.lstrip("\n") == result.output
+    assert expected == result.output

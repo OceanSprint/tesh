@@ -29,7 +29,7 @@ black = "==22.6.0"  # remove pin after upgrading to nixpkgs-22.11
 codespell = "==2.1.0"  # remove pin after upgrading to nixpkgs-22.11
 coverage = "*"
 docutils = "*"
-flake8 = "*"
+flake8 = "==5.0.4"
 flake8-assertive = "*"
 flake8-blind-except = "*"
 flake8-bugbear = "*"

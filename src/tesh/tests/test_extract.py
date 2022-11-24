@@ -1,8 +1,8 @@
 """Tests for the extract.py module."""
 
 from tesh.extract import Block
-from tesh.extract import ShellSession
 from tesh.extract import parse_exitcodes
+from tesh.extract import ShellSession
 
 import pytest
 
@@ -27,7 +27,7 @@ def test_Block() -> None:
     """Test edge cases with the Block dataclass."""
 
     # full data
-    Block(command="foo", output="bar")
+    Block(command="foo", output=["bar", "baz"])
 
     # minimal data
     Block()

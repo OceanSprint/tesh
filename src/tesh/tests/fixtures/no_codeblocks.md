@@ -12,7 +12,7 @@ pondere timendos Proetum ferarum, ille illae cuncta.
 > Populus sine, canentis est nollet sui flammas. Tauri at arce verba negat
 > ramosque victorem est flores solacia gurges. Quam Picus Atridae dextra rictus
 > incumbens tuentes, ad quid quicquam constitit. Vellera natus celebrant
-> [urbemque superos forem](http://remotus.net/sustinet-quoque.aspx) pectora te
+> [urbemque superos forem](http://remotus.net/sustinet-quoque.aspx) pectora the
 > inguine felix quaeque nescio moriturus invito dignamque et Venus fugae causa.
 
 ## Et quae
