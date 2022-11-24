@@ -7,10 +7,13 @@ authors = [
   "Nejc Zupan",
 ]
 license = "MIT"
+packages = [
+  { include = "tesh", from = "src" },
+]
 
 
 [tool.poetry.scripts]
-tesh = "tesh:hello"
+tesh = "tesh:run"
 
 
 [tool.poetry.dependencies]
@@ -26,7 +29,7 @@ black = "==22.6.0"  # remove pin after upgrading to nixpkgs-22.11
 codespell = "==2.1.0"  # remove pin after upgrading to nixpkgs-22.11
 coverage = "*"
 docutils = "*"
-flake8 = "*"
+flake8 = "==5.0.4"
 flake8-assertive = "*"
 flake8-blind-except = "*"
 flake8-bugbear = "*"
@@ -36,7 +39,6 @@ flake8-debugger = "*"
 flake8-deprecated = "*"
 flake8-docstrings = "*"
 flake8-ensure-ascii = "*"
-flake8-mutable = "*"
 flake8-plone-hasattr = "*"
 flake8-print = "*"
 flake8-self = "*"
@@ -48,6 +50,7 @@ mypy = "==0.971"  # remove dependency after upgrading to nixpkgs-22.11
 pdbpp = "*"
 pre-commit = "*"
 pre-commit-hooks = "*"
+pyfakefs = "*"
 pytest = "==7.1.2"  # remove pin after upgrading to nixpkgs-22.11
 pytest-cov = "*"
 pytest-instafail = "*"

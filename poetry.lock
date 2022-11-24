@@ -272,17 +272,6 @@ flake8 = ">=3.7"
 dev = ["flake8", "mypy", "pydocstyle", "pytest", "isort", "black"]
 
 [[package]]
-name = "flake8-mutable"
-version = "1.2.0"
-description = "mutable defaults flake8 extension"
-category = "dev"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-flake8 = "*"
-
-[[package]]
 name = "flake8-plone-hasattr"
 version = "1.0.0"
 description = "Checks for hasattr, which is considered harmful in Plone projects."
@@ -519,7 +508,7 @@ virtualenv = ">=20.0.8"
 
 [[package]]
 name = "pre-commit-hooks"
-version = "4.3.0"
+version = "4.4.0"
 description = "Some out-of-the-box hooks for pre-commit."
 category = "dev"
 optional = false
@@ -566,6 +555,14 @@ snowballstemmer = "*"
 
 [package.extras]
 toml = ["toml"]
+
+[[package]]
+name = "pyfakefs"
+version = "5.0.0"
+description = "pyfakefs implements a fake file system that mocks the Python file system modules."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
 
 [[package]]
 name = "pyflakes"
@@ -837,7 +834,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "flake8 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "020dd8e602097173ff19eaa558eab2219de4e0a6ba4197afdfc0c8896f8b7420"
+content-hash = "d21be11983b0ec29ae405f2cd12c41952d0e7d47d35c2604e2d1a07445bb25b4"
 
 [metadata.files]
 atomicwrites = [
@@ -999,10 +996,6 @@ flake8-ensure-ascii = [
     {file = "flake8-ensure-ascii-1.0.0.tar.gz", hash = "sha256:9b965231a2dede024ea90f349c4e260ab24e92d0d23bc8ea8165def06912864f"},
     {file = "flake8_ensure_ascii-1.0.0-py3-none-any.whl", hash = "sha256:9cfb64217a682bc89f4c8d99c6f56e0afb739fb4ef7c91b5ab3b07782d109cea"},
 ]
-flake8-mutable = [
-    {file = "flake8-mutable-1.2.0.tar.gz", hash = "sha256:ee9b77111b867d845177bbc289d87d541445ffcc6029a0c5c65865b42b18c6a6"},
-    {file = "flake8_mutable-1.2.0-py2-none-any.whl", hash = "sha256:38fd9dadcbcda6550a916197bc40ed76908119dabb37fbcca30873666c31d2d5"},
-]
 flake8-plone-hasattr = [
     {file = "flake8-plone-hasattr-1.0.0.tar.gz", hash = "sha256:c7c5ddb93ec50d0910a7bedeedc5213bf02d3105f4f74ea651ca2e9ddda897fc"},
     {file = "flake8_plone_hasattr-1.0.0-py3-none-any.whl", hash = "sha256:caaf6207cf86782b52f334e96569d07f5c03cc7615c3330ce857831bcd2e1e11"},
@@ -1104,8 +1097,8 @@ pre-commit = [
     {file = "pre_commit-2.20.0.tar.gz", hash = "sha256:a978dac7bc9ec0bcee55c18a277d553b0f419d259dadb4b9418ff2d00eb43959"},
 ]
 pre-commit-hooks = [
-    {file = "pre_commit_hooks-4.3.0-py2.py3-none-any.whl", hash = "sha256:9ccaf7c98794659d345080ee1ea0256a55ae059675045eebdbbc17c0be8c7e4b"},
-    {file = "pre_commit_hooks-4.3.0.tar.gz", hash = "sha256:fda598a4c834d030727e6a615722718b47510f4bed72df4c949f95ba9f5aaf88"},
+    {file = "pre_commit_hooks-4.4.0-py2.py3-none-any.whl", hash = "sha256:fc8837335476221ccccda3d176ed6ae29fe58753ce7e8b7863f5d0f987328fc6"},
+    {file = "pre_commit_hooks-4.4.0.tar.gz", hash = "sha256:7011eed8e1a25cde94693da009cba76392194cecc2f3f06c51a44ea6ad6c2af9"},
 ]
 ptyprocess = [
     {file = "ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"},
@@ -1122,6 +1115,10 @@ pycodestyle = [
 pydocstyle = [
     {file = "pydocstyle-6.1.1-py3-none-any.whl", hash = "sha256:6987826d6775056839940041beef5c08cc7e3d71d63149b48e36727f70144dc4"},
     {file = "pydocstyle-6.1.1.tar.gz", hash = "sha256:1d41b7c459ba0ee6c345f2eb9ae827cab14a7533a88c5c6f7e94923f72df92dc"},
+]
+pyfakefs = [
+    {file = "pyfakefs-5.0.0-py3-none-any.whl", hash = "sha256:e1b01954978fe2d9a4d75f079359d7f8d3af3bb12ff2dc8633a4cc0a0dc7fbda"},
+    {file = "pyfakefs-5.0.0.tar.gz", hash = "sha256:19d1d8f1ee520891d78b6ed05c2078e0792d545f83dee33461fbaa5cc72e187d"},
 ]
 pyflakes = [
     {file = "pyflakes-2.5.0-py2.py3-none-any.whl", hash = "sha256:4579f67d887f804e67edb544428f264b7b24f435b263c4614f384135cea553d2"},

@@ -70,8 +70,13 @@ else
 	@poetry run pytest $(path)
 endif
 
+.PHONY: tesh
+tesh:
+	# TODO: add `poetry run`
+	@tesh .
+
 .PHONY: test
 test: tests
 
 .PHONY: tests
-tests: lint types unit
+tests: lint types unit tesh

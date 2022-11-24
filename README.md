@@ -1,4 +1,3 @@
-
 # tesh [tɛʃ] - TEstable SHell sessions in Markdown
 
 Showing shell interactions how to run a tool is useful for teaching and explaining.
@@ -16,17 +15,13 @@ Not anymore.
 ## Syntax
 
 ~~~
- ```shell-session tesh-session="helloworld" tesh-exitcodes="0 1 0" tesh-setup="foo.sh" tesh-ps1="#" tesh-os="linux"
-$ git --version
-git version 2...
+```shell-session tesh-session="helloworld" tesh-exitcodes="0 1" tesh-setup="readme.sh" tesh-ps1="#" tesh-os="linux"
+$ tesh --version
+tesh, version 0.1...
 
-$ git foo
-git: 'foo' is not a git command
-
-$ git status
-On branch master
+$ tesh --foo
 ...
-nothing to commit, working tree clean
+Error: No such option: --foo
 ```
 ~~~
 
@@ -36,7 +31,7 @@ The first line of the code block allows you to set a few directives:
 - ``tesh-exitcodes`` optional list of exit codes in the order of commands executed inside the code block.
 - ``tesh-setup`` optional filename allows you to run a script to setup the environment without showing polluting the Markdown file.
 - ``tesh-ps1`` sets additional PS1 prompts that are supported besides ``$``.
-- ``tesh-os`` optional parameter to specify on which OSes should this session block be tested
+- ``tesh-platform`` optional parameter to specify on which platforms should this session block be tested. Examples: linux, darwin, windows
 - ``...`` used in a newline is a wildcard matching 0 or more lines
 - ``...`` used inside a line is a wildcard matching 0 or more chars
 
@@ -69,6 +64,9 @@ Alternatively, if you use [nix](https://nix.dev/tutorials/declarative-and-reprod
 Then you can run `make tests` to run all tests & checks. Additional `make` commands are available:
 
 ```
+# run tesh on all Markdown files
+$ make tesh
+
 # run flake8 linters on changed files only
 $ make lint
 

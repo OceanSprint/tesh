@@ -17,4 +17,13 @@ ignore =
 # W503: line break before binary operator
     W503,
 # E501: line too long (85 > 79 characters) - use B950 instead (10% leeway)
-    E501
+    E501,
+# T201: print found
+    T201
+
+# in tests we often assert 📄 and ✨ and we don't want to per-line ignore them all the time
+# in tests we have multiline strings to assert tesh output and its fine
+# ENC100 Non ASCII encoding found
+# E122 continuation line missing indentation or outdented
+per-file-ignores =
+    test_*.py: ENC100, E122
