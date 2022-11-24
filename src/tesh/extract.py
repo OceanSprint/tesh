@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 from dataclasses import field
 from pathlib import Path
-from pathlib import PosixPath
 
 import platform
 import re
@@ -139,7 +138,7 @@ def extract(
     return list(sessions.values())
 
 
-def fail(*msg: t.Union[str, t.List[t.Union[str, PosixPath]]]) -> None:
+def fail(*msg: t.Union[str, Path]) -> None:
     """Print the failure and exit."""
     print("❌ Failed")  # noqa: ENC100
     print("    ", *msg)
