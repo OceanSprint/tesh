@@ -1,4 +1,4 @@
-# tesh [tɛʃ] - TEstable SHell sessions in Markdown
+# tesh [[tɛʃ]](http://ipa-reader.xyz/?text=t%C9%9B%CA%83&voice=Joanna) - TEstable SHell sessions in Markdown
 
 Showing shell interactions how to run a tool is useful for teaching and explaining.
 
