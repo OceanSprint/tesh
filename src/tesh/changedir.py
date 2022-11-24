@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 import os
+
 # Remove once we support Python 3.11+
 @contextmanager
 def changedir(path: Path):

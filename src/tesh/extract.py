@@ -8,11 +8,14 @@ import re
 import sys
 import typing as t
 
+
 @dataclass
 class Fixture:
     """Files for a session."""
+
     filename: str
     contents: str
+
 
 @dataclass
 class Block:
@@ -39,8 +42,7 @@ class ShellSession:
 
 
 def extract(
-    f: t.TextIO,
-    max_num_lines: int = 100000
+    f: t.TextIO, max_num_lines: int = 100000
 ) -> list[ShellSession]:  # pragma: no cover  # TODO
     """Extract testable shell sessions from a Markdown file."""
     sessions: dict["str", ShellSession] = {}
@@ -72,9 +74,7 @@ def extract(
                 if not line:
                     raise RuntimeError("Hit end-of-file prematurely. Syntax error?")
                 if k > max_num_lines:
-                    raise RuntimeError(
-                        f"File too large (> {max_num_lines} lines)."
-                    )
+                    raise RuntimeError(f"File too large (> {max_num_lines} lines).")
 
                 # check if end of block
                 if lsline[:num_leading_backticks] == "`" * num_leading_backticks:
@@ -109,7 +109,9 @@ def extract(
 
                     ps1 = directives.get("ps1", None)
                     if ps1 and session.ps1:
-                        fail("Multiple ps1 directives for same session aren't currently possible.")
+                        fail(
+                            "Multiple ps1 directives for same session aren't currently possible."
+                        )
                     elif ps1:
                         session.ps1 = ps1
 
@@ -134,10 +136,12 @@ def extract(
 
     return list(sessions.values())
 
-def fail(**msg):
+
+def fail(*msg):
     print("❌ Failed")
-    print("    ", **msg)
+    print("    ", *msg)
     sys.exit(1)
+
 
 def extract_blocks(session: ShellSession, verbose: bool) -> None:
     """Extract blocks from sessions."""
@@ -159,7 +163,9 @@ def extract_blocks(session: ShellSession, verbose: bool) -> None:
     session.blocks = blocks
 
     if session.exitcodes and (len(session.exitcodes) != len(session.blocks)):
-        fail("If you're using exit codes for a session, you must specify them for all commands.")
+        fail(
+            "If you're using exit codes for a session, you must specify them for all commands."
+        )
 
 
 def parse_exitcodes(exitcodes_spec: str) -> list[int]:

@@ -6,6 +6,7 @@ from tesh.extract import ShellSession
 import fnmatch
 import pexpect
 import sys
+import os
 
 
 def test(filename: str, session: ShellSession, verbose: bool) -> None:
@@ -18,7 +19,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
         shell.expect(r"\$ ")
         if session.setup:
             shell.sendline("source " + session.setup)
-            shell.expect("r\$ ")
+            shell.expect(r"\$ ")
         for index, block in enumerate(session.blocks):
             if verbose:
                 print("      ", block)
@@ -35,7 +36,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
 
             shell.sendline(block.command)
 
-            shell.expect(block.command.replace("$", "r\$"))
+            shell.expect(block.command.replace("$", r"\$"))
             shell.expect(r"\$ ")
 
             expected_match = (
