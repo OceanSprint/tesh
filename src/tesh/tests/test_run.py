@@ -72,7 +72,9 @@ def test_verbose() -> None:
     expected = (
 """
 📄 Checking src/tesh/tests/fixtures/folder/simple.md
-  ✨ Running foo         Block(command='echo "foo"', output=['foo'])
+  ✨ Running foo  :
+       Command: echo "foo"
+       Output: ['foo']
 ✅ Passed
 """
     ).lstrip("\n")
