@@ -123,23 +123,24 @@ def extract(
     return list(sessions.values())
 
 
-# def extract_blocks(session: ShellSession, verbose: bool) -> None:
-#     prompt = re.compile(r"^(\$|{ps1}) ".format(ps1=session.ps1))
-#     new_block = Block()
-#     blocks = []
+def extract_blocks(session: ShellSession, verbose: bool) -> None:
+    """Extract blocks from sessions."""
+    prompt = re.compile(r"^(\$|{ps1}) ".format(ps1=session.ps1))
+    new_block = Block()
+    blocks = []
 
-#     for line in session.lines:
-#         if prompt.match(line):
-#             if new_block.command:
-#                 blocks.append(new_block)
-#             new_block = Block()
-#             new_block.command = re.sub(prompt, "", line).strip()
-#         elif not line.strip():
-#             continue
-#         else:
-#             new_block.output.append(line.strip())
-#     blocks.append(new_block)
-#     session.blocks = blocks
+    for line in session.lines:
+        if prompt.match(line):
+            if new_block.command:
+                blocks.append(new_block)
+            new_block = Block()
+            new_block.command = re.sub(prompt, "", line).strip()
+        elif not line.strip():
+            continue
+        else:
+            new_block.output.append(line.strip())
+    blocks.append(new_block)
+    session.blocks = blocks
 
 
 def parse_exitcodes(exitcodes_spec: str) -> list[int]:
