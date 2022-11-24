@@ -23,10 +23,11 @@ def run(paths: t.Set[str], ext: str, verbose: bool) -> None:
             filenames.append(path)
         else:
             for subpath in Path(path).rglob("*." + ext):
-                filenames.append(subpath.name)
+                filenames.append(str(subpath))
 
     # remove duplicates
     filenames = list(set(filenames))
+    filenames.sort()
 
     for filename in filenames:
         print("📄 Checking", filename)  # noqa: ENC100
