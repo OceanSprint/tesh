@@ -26,9 +26,9 @@ class ShellSession:
     lines: list[str]
     blocks: list[Block]
     id_: str
-    ps1: str | None = None
-    setup: str | None = None
-    exitcodes: list[int] | None = None
+    ps1: t.Union[str, None] = None
+    setup: t.Union[str, None] = None
+    exitcodes: t.Union[list[int], None] = None
 
 
 def extract(
