@@ -138,7 +138,8 @@ def extract(
 
 
 def fail(*msg):
-    print("❌ Failed")
+    """Print the failure and exit."""
+    print("❌ Failed")  # noqa: ENC100
     print("    ", *msg)
     sys.exit(1)
 

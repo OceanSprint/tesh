@@ -1,17 +1,18 @@
 """Initialize the tesh runner."""
 
 from pathlib import Path
-from tesh.extract import extract
-from tesh.extract import fail
-from tesh.extract import extract_blocks
-from tesh.test import test, write_fixtures
 from tesh.changedir import changedir
+from tesh.extract import extract
+from tesh.extract import extract_blocks
+from tesh.extract import fail
+from tesh.test import test
+from tesh.test import write_fixtures
 
+import click
 import os.path
 import shutil
-import click
-import typing as t
 import tempfile
+import typing as t
 
 
 @click.command()

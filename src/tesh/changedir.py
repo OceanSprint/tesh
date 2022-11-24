@@ -1,19 +1,15 @@
+"""Temporary hack until Python 3.11+."""
+
 from contextlib import contextmanager
 from pathlib import Path
 
 import os
 
+
 # Remove once we support Python 3.11+
 @contextmanager
-def changedir(path: Path):
-    """Sets the cwd within the context
-
-    Args:
-        path (Path): The path to the cwd
-
-    Yields:
-        None
-    """
+def changedir(path: Path) -> None:
+    """Set the cwd within the context."""
 
     origin = Path().absolute()
     try:

@@ -4,9 +4,9 @@ from pathlib import Path
 from tesh.extract import ShellSession
 
 import fnmatch
+import os
 import pexpect
 import sys
-import os
 
 
 def test(filename: str, session: ShellSession, verbose: bool) -> None:
@@ -78,6 +78,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
 
 
 def write_fixtures(session):
+    """Dump code block into a file."""
     for fixture in session.fixtures:
         # TODO: support directories
         with open(fixture.filename, "w") as f:
