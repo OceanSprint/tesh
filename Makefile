@@ -73,7 +73,7 @@ endif
 .PHONY: tesh
 tesh:
 	# TODO: add `poetry run`
-	@tesh .
+	@tesh *.md
 
 .PHONY: test
 test: tests

@@ -3,6 +3,8 @@
 from click.testing import CliRunner
 from tesh import run
 
+import pexpect
+
 
 def test_version() -> None:
     """Test printing the current version."""
@@ -139,6 +141,14 @@ foo
     # fmt: on
 
     assert expected == result.output
+
+
+def test_DEBUG() -> None:  # pragma: no cover
+    """Test using DEBUG to drop into an interactive shell."""
+    shell = pexpect.spawn("tesh src/tesh/tests/fixtures/debug.md")
+    shell.expect(r'\$ echo "foo"')
+
+    assert shell.after == b'$ echo "foo"'
 
 
 def test_exitcodes() -> None:
