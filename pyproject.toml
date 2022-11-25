@@ -13,7 +13,7 @@ packages = [
 
 
 [tool.poetry.scripts]
-tesh = "tesh:run"
+tesh = "tesh:tesh"
 
 
 [tool.poetry.dependencies]

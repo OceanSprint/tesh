@@ -20,7 +20,7 @@ import typing as t
 @click.option("--ext", default="md", help="Extension of files to extract from.")
 @click.option("--verbose", is_flag=True, default=False)
 @click.version_option()
-def run(paths: t.Set[str], ext: str, verbose: bool) -> None:
+def tesh(paths: t.Set[str], ext: str, verbose: bool) -> None:
     """Collect and test code blocks."""
 
     filenames = []
