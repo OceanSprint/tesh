@@ -14,7 +14,9 @@ Not anymore.
 
 ## Syntax
 
-To mark a `shell-session` as testable, append `tesh-session="NAME"` to the header line.
+To mark a code block as testable, append `tesh-session="NAME"` to the header line.
+
+You can use any syntax highlighting directives like `shell-session` or `console`.
 
 ~~~
 ```shell-session tesh-session="hello"
@@ -70,7 +72,8 @@ You can set a few other optional directives in the header line:
 - `tesh-exitcodes`: a list of exit codes in the order of commands executed inside the code block,
 - `tesh-setup`: a filename of a script to run before running the commands in the code block,
 - `tesh-ps1`: allow an additional PS1 prompt besides the default `$`,
-- `tesh-platform`: specify on which platforms this session block should be tested (`linux`, `darwin`, `windows`).
+- `tesh-platform`: specify on which platforms this session block should be tested (`linux`, `darwin`, `windows`),
+- `tesh-fixture`: a filename to save the current snippet.
 
 Let's look at all of these through examples
 
@@ -184,8 +187,9 @@ $ make lock
 | Custom PS1 prompts                       | ✔️ | ✖️ | ✖️ |
 | Assert non-zero exit codes               | ✔️ | ✖️ | ✖️ |
 | Setup the shell environment              | ✔️ | ✖️ | ✖️ |
+| Reference fixtures from other snippets   | ✔️ | ✖️ | ✖️ |
 | Wildcard matching of the command output  | ✔️ | ✖️ | ✖️ |
-
+| Starts the shell in debugging mode       | ✔️ | ✖️ | ✖️ |
 
 * ✔️: Supported
 * C: Possible but you have to write some code yourself
