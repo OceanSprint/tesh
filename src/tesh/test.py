@@ -1,11 +1,13 @@
 """Run testable sessions line-by-line and assert the output."""
 
 from pathlib import Path
+from tesh.extract import get_prompt_regex
 from tesh.extract import ShellSession
 
 import fnmatch
 import os
 import pexpect
+import re
 import sys
 
 
@@ -14,12 +16,12 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
     with Path(filename).parent:
         shell = pexpect.spawn(
             "bash --norc --noprofile",
-            env={"PS1": "$ ", "PATH": os.environ["PATH"]},
+            env={"PS1": "$ ", "PATH": os.environ["PATH"], "HOME": os.getcwd()},
         )
         shell.expect(r"\$ ")
         if session.setup:
             shell.sendline("source " + session.setup)
-            shell.expect(r"\$ ")
+            shell.expect(get_prompt_regex(session))
         for index, block in enumerate(session.blocks):
             if verbose:
                 print(":")
@@ -32,23 +34,20 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
             # detect it because the test spawns a sub-shell
             if "DEBUG" in expected_output:  # pragma: no cover
                 print()
-                print("$ ", end="")
+                print(block.prompt, end="")
                 shell.send(block.command)
                 shell.interact()
 
             shell.sendline(block.command)
 
-            shell.expect(block.command.replace("$", r"\$"))
+            shell.expect(re.escape(block.command))
 
-            shell.expect(r"\$ ")
-
-            expected_match = (
-                expected_output.strip()
-                .replace("*", "[*]")
-                .replace("?", "[?]")
-                .replace("...", "*")
-            )
-            actual_output = shell.before.decode("utf-8").strip().replace("\r\n", "\n")
+            # we expect the prompt of the next command unless there's no more
+            if index + 1 < len(session.blocks):
+                prompt = session.blocks[index + 1].prompt
+            else:
+                prompt = session.blocks[index].prompt
+            shell.expect(re.escape(prompt))
 
             expected_match = (
                 expected_output.strip()
@@ -70,7 +69,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
             # handle exit codes
             shell.sendline("echo $?")
             shell.expect("echo [$][?]")
-            shell.expect(r"\$ ")
+            shell.expect(re.escape(prompt))
             exitcode = int(shell.before.decode("utf-8").strip())
             if session.exitcodes and exitcode != session.exitcodes[index]:
                 print("❌ Failed")  # noqa: ENC100
