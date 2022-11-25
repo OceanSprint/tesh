@@ -27,6 +27,7 @@ class Block:
 
     command: str
     output: t.List[str] = field(default_factory=lambda: [])
+    prompt: str = "$ "
 
 
 @dataclass
@@ -104,17 +105,21 @@ def extract(
                     session.fixtures.append(Fixture(fixture, "\n".join(code_lines)))
                     continue
 
+                ps1 = directives.get("ps1", None)
+
                 if id_ in sessions:
                     session = sessions[id_]
                     session.lines += code_lines
 
-                    ps1 = directives.get("ps1", None)
-                    if ps1 and session.ps1:
-                        fail(
-                            "Multiple ps1 directives for same session aren't currently possible."
-                        )
-                    elif ps1:
-                        session.ps1 = ps1
+                    if ps1:
+                        if session.ps1 is not None and session.ps1 != ps1:
+                            fail(
+                                "You can't have two different prompts in the same session yet: {} and {}".format(
+                                    ps1, session.ps1
+                                )
+                            )
+                        else:
+                            session.ps1 = ps1
 
                     exitcodes = parse_exitcodes(directives.get("exitcodes", ""))
                     if exitcodes:
@@ -130,7 +135,7 @@ def extract(
                         lines=code_lines,
                         blocks=[],
                         id_=directives["session"],
-                        ps1=directives.get("ps1", None),
+                        ps1=ps1,
                         exitcodes=parse_exitcodes(directives.get("exitcodes", "")),
                         setup=directives.get("setup", None),
                     )
@@ -147,16 +152,19 @@ def fail(*msg: t.Union[str, Path]) -> None:
 
 def extract_blocks(session: ShellSession, verbose: bool) -> None:
     """Extract blocks from sessions."""
-    prompt = re.compile(r"^(\$|{ps1}) ".format(ps1=session.ps1))
+    prompt = re.compile(get_prompt_regex(session))
     new_block = Block("")  # TODO: rewrite this
     blocks = []
 
     for line in session.lines:
-        if prompt.match(line):
+        if m := prompt.match(line):
             if new_block.command:
                 blocks.append(new_block)
             new_block = Block("")
-            new_block.command = re.sub(prompt, "", line).strip()
+            new_block.command = re.sub(
+                r"^" + get_prompt_regex(session), "", line
+            ).strip()
+            new_block.prompt = m.group(0)
         elif not line.strip():
             continue
         else:
@@ -168,6 +176,14 @@ def extract_blocks(session: ShellSession, verbose: bool) -> None:
         fail(
             "If you're using exit codes for a session, you must specify them for all commands."
         )
+
+
+def get_prompt_regex(session: ShellSession) -> str:
+    """Return the regex for the prompt."""
+    if session.ps1:
+        return r"(\$|{ps1}) ".format(ps1=re.escape(session.ps1))
+    else:
+        return r"\$ "
 
 
 def parse_exitcodes(exitcodes_spec: str) -> list[int]:
