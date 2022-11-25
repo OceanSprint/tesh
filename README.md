@@ -1,3 +1,30 @@
+<p align="center">
+  <a href="https://circleci.com/gh/OceanSprint/tesh">
+    <img alt="CircleCI for tesh (main branch)"
+         src="https://circleci.com/gh/OceanSprint/tesh.svg?style=shield">
+  </a>
+  <img alt="Test coverage (main branch)"
+       src="https://img.shields.io/badge/tests_coverage-100%25-brightgreen.svg">
+  <img alt="Test coverage (main branch)"
+       src="https://img.shields.io/badge/types_coverage-100%25-brightgreen.svg">
+  <a href="https://pypi.org/project/tesh/">
+    <img alt="latest version of tesh on PyPI"
+         src="https://img.shields.io/pypi/v/tesh.svg">
+  </a>
+  <a href="https://pypi.org/project/tesh/">
+    <img alt="Supported Python versions"
+         src="https://img.shields.io/pypi/pyversions/tesh.svg">
+  </a>
+  <a href="https://github.com/OceanSprint/tesh/blob/main/LICENSE">
+    <img alt="License: MIT"
+         src="https://img.shields.io/badge/License-MIT-yellow.svg">
+  </a>
+  <a href="https://github.com/OceanSprint/tesh/graphs/contributors">
+    <img alt="Built by these great folks!"
+         src="https://img.shields.io/github/contributors/OceanSprint/tesh.svg">
+  </a>
+</p>
+
 # tesh [[tɛʃ]](http://ipa-reader.xyz/?text=t%C9%9B%CA%83&voice=Joanna) - TEstable SHell sessions in Markdown
 
 Showing shell interactions how to run a tool is useful for teaching and explaining.
@@ -6,11 +33,23 @@ Making sure that example still works over the years is painfully hard.
 
 Not anymore.
 
-## Design decisions
+```shell-session
+$ tesh demo/
+📄 Checking demo/happy.md
+  ✨ Running foo  ✅ Passed
+  ✨ Running bar  ✅ Passed
+📄 Checking demo/sad.md
+  ✨ Running foo  ❌ Failed
 
-- Supports Linux / macOS.
-- Not tied to a specific markdown flavor or tooling.
-- Renders reasonably well on GitHub.
+         Expected:
+sad panda
+         Got:
+foo
+
+Taking you into the shell ...
+
+$
+```
 
 ## Syntax
 
@@ -105,45 +144,64 @@ Hello Gaea!
 
 ### Custom prompts
 
-TODO
+Sometimes you need to drop into a virtualenv or similar shell that changes the prompt. `tesh` supports this via `test-ps1` directive.
 
 ~~~
-```shell-session tesh-session="prompt" tesh-ps1="foo"
-$ echo "foo"
-foo
+```shell-session tesh-session="prompt" tesh-ps1="(foo) $"
+$ PS1="(foo) $ "
+
+
+(foo) $ echo "hello"
+hello
 ```
 ~~~
 
 ### Only run on certain platforms
 
-TODO
+Some examples should only run on certain platforms, use `tesh-platform` to declare them as such.
+
+~~~
+```shell-session tesh-session="platform" tesh-platform="linux"
+$ uname
+...Linux...
+```
+~~~
 
 ~~~
 ```shell-session tesh-session="platform" tesh-platform="darwin"
-$ echo "foo"
-foo
+$ uname
+...Darwin...
 ```
 ~~~
 
 
-## Usage
+## Design decisions
 
-```shell-session tesh="readme" tesh-exitcode="1"
-$ tesh DIR(S)
-Running foobar.md
-  Running helloworld
-Running baz.md
-  Running test1
-  Running test2 ... FAILED
+- Supports Linux / macOS.
+- Not tied to a specific markdown flavor or tooling.
+- Renders reasonably well on GitHub.
 
-    Expected:
-      $ git foo
-      git: 'bar' is not a git command
 
-    Actual:
-      $ git foo
-      git: 'foo' is not a git command
-```
+## Comparison with other tools
+
+| | tesh | [mdsh](https://github.com/zimbatm/mdsh) | [pandoc filters](http://www.chriswarbo.net/projects/activecode/index.html) |
+|------------------------------------------|---|---|---|
+| Execute shell session                    | ✔️ | ✔️ | ✔️ |
+| Modify markdown file with the new output | 🚧[<sub>[1]</sub>](https://github.com/OceanSprint/tesh/issues/6) | ✔️ | ✔️ |
+| Shared session between code blocks       | ✔️ | ✖️ | ✖️ |
+| Custom PS1 prompts                       | ✔️ | ✖️ | ✖️ |
+| Assert non-zero exit codes               | ✔️ | ✖️ | ✖️ |
+| Setup the shell environment              | ✔️ | ✖️ | ✖️ |
+| Reference fixtures from other snippets   | ✔️ | ✖️ | ✖️ |
+| Wildcard matching of the command output  | ✔️ | ✖️ | ✖️ |
+| Starts the shell in debugging mode       | ✔️ | ✖️ | ✖️ |
+
+* ✔️: Supported
+* C: Possible but you have to write some code yourself
+* 🚧: Under development
+* ✖️: Not supported
+* ?: I don't know.
+
 
 ## Developing `tesh`
 
@@ -175,24 +233,3 @@ $ make unit filter=foo
 # re-lock Python dependencies (for example after adding or removing one from pyproject.toml)
 $ make lock
 ```
-
-
-## Comparison with other tools
-
-| | tesh | [mdsh](https://github.com/zimbatm/mdsh) | [pandoc filters](http://www.chriswarbo.net/projects/activecode/index.html) |
-|------------------------------------------|---|---|---|
-| Execute shell session                    | ✔️ | ✔️ | ✔️ |
-| Modify markdown file with the new output | 🚧[<sub>[1]</sub>](https://github.com/OceanSprint/tesh/issues/6) | ✔️ | ✔️ |
-| Shared session between code blocks       | ✔️ | ✖️ | ✖️ |
-| Custom PS1 prompts                       | ✔️ | ✖️ | ✖️ |
-| Assert non-zero exit codes               | ✔️ | ✖️ | ✖️ |
-| Setup the shell environment              | ✔️ | ✖️ | ✖️ |
-| Reference fixtures from other snippets   | ✔️ | ✖️ | ✖️ |
-| Wildcard matching of the command output  | ✔️ | ✖️ | ✖️ |
-| Starts the shell in debugging mode       | ✔️ | ✖️ | ✖️ |
-
-* ✔️: Supported
-* C: Possible but you have to write some code yourself
-* 🚧: Under development
-* ✖️: Not supported
-* ?: I don't know.
