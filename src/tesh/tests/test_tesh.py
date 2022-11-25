@@ -145,12 +145,20 @@ foo
     assert expected == result.output
 
 
-def test_DEBUG() -> None:  # pragma: no cover
-    """Test using DEBUG to drop into an interactive shell."""
+def test_debug() -> None:  # pragma: no cover
+    """Test dropping into an interactive shell on error."""
     shell = pexpect.spawn("tesh src/tesh/tests/fixtures/debug.md")
-    shell.expect(r'\$ echo "foo"')
+    shell.expect("Taking you into the shell ...")
 
-    assert shell.after == b'$ echo "foo"'
+    assert "✨ Running foo  ❌ Failed".encode() in shell.before
+
+
+def test_timeout() -> None:  # pragma: no cover
+    """Test dropping into an interactive shell on timeout."""
+    shell = pexpect.spawn("tesh src/tesh/tests/fixtures/timeout.md")
+    shell.expect("Taking you into the shell ...", timeout=60)
+
+    assert "✨ Running foo  ❌ Timed out after 30s".encode() in shell.before
 
 
 def test_exitcodes() -> None:

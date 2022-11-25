@@ -1,6 +1,7 @@
 """Run testable sessions line-by-line and assert the output."""
 
 from pathlib import Path
+from tesh.extract import Block
 from tesh.extract import get_prompt_regex
 from tesh.extract import ShellSession
 
@@ -11,7 +12,7 @@ import re
 import sys
 
 
-def test(filename: str, session: ShellSession, verbose: bool) -> None:
+def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> None:
     """Run testable sessions in a pexpect shell."""
     with Path(filename).parent:
         shell = pexpect.spawn(
@@ -30,16 +31,7 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
 
             expected_output = "\n".join(block.output)
 
-            # This is actually covered in test_debug() but coverage does not
-            # detect it because the test spawns a sub-shell
-            if "DEBUG" in expected_output:  # pragma: no cover
-                print()
-                print(block.prompt, end="")
-                shell.send(block.command)
-                shell.interact()
-
             shell.sendline(block.command)
-
             shell.expect(re.escape(block.command))
 
             # we expect the prompt of the next command unless there's no more
@@ -47,7 +39,20 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 prompt = session.blocks[index + 1].prompt
             else:
                 prompt = session.blocks[index].prompt
-            shell.expect(re.escape(prompt))
+            try:
+                shell.expect(re.escape(prompt))
+
+            # This is tested in test_timeout but coverage doesn't catch it because
+            # it is executed in a subshell
+            except pexpect.exceptions.TIMEOUT:  # pragma: no cover
+                print("❌ Timed out after 30s")  # noqa: ENC100
+                print()
+                print("         Output:")
+                print(shell.before.decode("utf-8").strip().replace("\r\n", "\n"))
+                if debug:
+                    invoke_debug(shell, block)
+                else:
+                    sys.exit(1)
 
             expected_match = (
                 expected_output.replace("*", "[*]")
@@ -71,7 +76,13 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 print(expected_output)
                 print("         Got:")
                 print(actual_output)
-                sys.exit(1)
+
+                # This is tested in test_debug but coverage doesn't catch it because
+                # it is executed in a subshell
+                if debug:  # pragma: no cover
+                    invoke_debug(shell, block)
+                else:
+                    sys.exit(1)
 
             # handle exit codes
             shell.sendline("echo $?")
@@ -83,7 +94,21 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 print()
                 print("         Expected exit code:", session.exitcodes[index])
                 print("         Got exit code:", exitcode)
-                sys.exit(1)
+                if debug:  # pragma: no cover
+                    invoke_debug(shell, block)
+                else:
+                    sys.exit(1)
+
+
+# This is tested in test_debug but coverage doesn't catch it because
+# it is executed in a subshell
+def invoke_debug(shell: pexpect.spawn, block: Block) -> None:  # pragma: no cover
+    """Take the user to a debug shell."""
+    print()
+    print("Taking you into the shell ...")
+    print()
+    print(block.prompt, end="")
+    shell.interact()
 
 
 def write_fixtures(session: ShellSession) -> None:
