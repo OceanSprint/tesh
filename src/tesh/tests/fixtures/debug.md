@@ -1,6 +1,6 @@
-# Using DEBUG to drop into an interactive shell
+# Drop into an interactive shell on error
 
 ```shell-session tesh-session="foo"
 $ echo "foo"
-DEBUG
+bar
 ```
