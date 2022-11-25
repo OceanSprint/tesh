@@ -23,6 +23,8 @@ Hello World!
 ```
 ~~~
 
+### Linking multiple code blocks into a single shell session
+
 Besides marking a code block as testable, `tesh-session` is a unique identifier that allows for multiple code blocks to share the same session.
 
 ~~~
@@ -39,6 +41,8 @@ Hello Earth!
 ```
 ~~~
 
+### Ignoring parts of the output
+
 Parts of the inline output can be ignored with `...`:
 
 ~~~
@@ -48,19 +52,18 @@ Hello ... Space!
 ```
 ~~~
 
-The same can be done for multiple lines of output:
-
-TODO: re-add triple quotes
+The same can be done for multiple lines of output. Note that trailing whitespace in every line is trimmed.
 
 ~~~
-``shell-session tesh-session="ignore"
-$ echo "Hello \n there \n from \n Space"
+```shell-session tesh-session="ignore"
+$ printf "Hello \nthere \nfrom \nSpace!"
 Hello
 ...
 Space!
-``
+```
 ~~~
 
+## Advanced directives
 
 You can set a few other optional directives in the header line:
 
@@ -75,23 +78,49 @@ Let's look at all of these through examples
 
 `tesh-exitcodes` accepts a list of integers, which represent the exit code for every command in the block.
 
+~~~
 ```shell-session tesh-session="exitcodes" tesh-exitcodes="1 0"
 $ false
 
 $ true
 
 ```
+~~~
+
 
 ### Test setup
 
 Sometimes you need to do some test setup before running the examples in your code blocks. Put those [in a file](./readme.sh) and point to it with the `tesh-setup` directive.
 
+~~~
 ```shell-session tesh-session="setup" tesh-setup="readme.sh"
 $ echo "Hello $NAME!"
 Hello Gaea!
 ```
+~~~
 
 
+### Custom prompts
+
+TODO
+
+~~~
+```shell-session tesh-session="prompt" tesh-ps1="foo"
+$ echo "foo"
+foo
+```
+~~~
+
+### Only run on certain platforms
+
+TODO
+
+~~~
+```shell-session tesh-session="platform" tesh-platform="darwin"
+$ echo "foo"
+foo
+```
+~~~
 
 
 ## Usage

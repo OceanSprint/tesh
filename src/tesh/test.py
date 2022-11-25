@@ -50,12 +50,19 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
             shell.expect(re.escape(prompt))
 
             expected_match = (
-                expected_output.strip()
-                .replace("*", "[*]")
+                expected_output.replace("*", "[*]")
                 .replace("?", "[?]")
                 .replace("...", "*")
             )
             actual_output = shell.before.decode("utf-8").strip().replace("\r\n", "\n")
+
+            # trim whitespace in every line
+            expected_output = "\n".join(
+                [line.rstrip() for line in expected_output.split("\n")]
+            )
+            actual_output = "\n".join(
+                [line.rstrip() for line in actual_output.split("\n")]
+            )
 
             if not fnmatch.fnmatch(actual_output, expected_match):
                 print("❌ Failed")  # noqa: ENC100
