@@ -11,6 +11,7 @@ from tesh.test import write_fixtures
 import click
 import os.path
 import shutil
+import sys
 import tempfile
 import typing as t
 
@@ -19,8 +20,9 @@ import typing as t
 @click.argument("paths", nargs=-1)
 @click.option("--ext", default="md", help="Extension of files to extract from.")
 @click.option("--verbose", is_flag=True, default=False)
+@click.option("--debug", is_flag=True, default=sys.stdin.isatty())
 @click.version_option()
-def tesh(paths: t.Set[str], ext: str, verbose: bool) -> None:
+def tesh(paths: t.Set[str], ext: str, verbose: bool, debug: bool) -> None:
     """Collect and test code blocks."""
 
     filenames = []
@@ -54,5 +56,5 @@ def tesh(paths: t.Set[str], ext: str, verbose: bool) -> None:
                     print("  ✨ Running", session.id_, " ", end="")  # noqa: ENC100
                     extract_blocks(session, verbose)
                     write_fixtures(session)
-                    test(filename, session, verbose)
+                    test(filename, session, verbose, debug)
                     print("✅ Passed")  # noqa: ENC100

@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from tesh.extract import get_prompt_regex
-from tesh.extract import ShellSession
+from tesh.extract import ShellSession, Block
 
 import fnmatch
 import os
@@ -11,7 +11,7 @@ import re
 import sys
 
 
-def test(filename: str, session: ShellSession, verbose: bool) -> None:
+def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> None:
     """Run testable sessions in a pexpect shell."""
     with Path(filename).parent:
         shell = pexpect.spawn(
@@ -47,7 +47,17 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 prompt = session.blocks[index + 1].prompt
             else:
                 prompt = session.blocks[index].prompt
-            shell.expect(re.escape(prompt))
+            try:
+                shell.expect(re.escape(prompt))
+            except pexpect.exceptions.TIMEOUT:
+                print("❌ Timed out after 30s")  # noqa: ENC100
+                print()
+                print("         Output:")
+                print(shell.before.decode("utf-8").strip().replace("\r\n", "\n"))
+                if debug:
+                    invoke_debug(shell, block)
+                else:
+                    sys.exit(1)
 
             expected_match = (
                 expected_output.replace("*", "[*]")
@@ -71,7 +81,10 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 print(expected_output)
                 print("         Got:")
                 print(actual_output)
-                sys.exit(1)
+                if debug:
+                    invoke_debug(shell, block)
+                else:
+                    sys.exit(1)
 
             # handle exit codes
             shell.sendline("echo $?")
@@ -84,6 +97,15 @@ def test(filename: str, session: ShellSession, verbose: bool) -> None:
                 print("         Expected exit code:", session.exitcodes[index])
                 print("         Got exit code:", exitcode)
                 sys.exit(1)
+
+
+def invoke_debug(shell: pexpect.spawn, block: Block) -> None:
+    """Take the user to a debug shell."""
+    print()
+    print("Taking you into the shell ...")
+    print()
+    print(block.prompt, end="")
+    shell.interact()
 
 
 def write_fixtures(session: ShellSession) -> None:
