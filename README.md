@@ -14,26 +14,113 @@ Not anymore.
 
 ## Syntax
 
-~~~
-``shell-session tesh-session="helloworld" tesh-exitcodes="0 1" tesh-setup="readme.sh" tesh-ps1="#" tesh-os="linux"
-$ tesh --version
-tesh, version 0.1...
+To mark a `shell-session` as testable, append `tesh-session="NAME"` to the header line.
 
-$ tesh --foo
+~~~
+```shell-session tesh-session="hello"
+$ echo "Hello World!"
+Hello World!
+```
+~~~
+
+### Linking multiple code blocks into a single shell session
+
+Besides marking a code block as testable, `tesh-session` is a unique identifier that allows for multiple code blocks to share the same session.
+
+~~~
+```shell-session tesh-session="multiple_blocks"
+$ export NAME=Earth
+
+```
+~~~
+
+~~~
+```shell-session tesh-session="multiple_blocks"
+$ echo "Hello $NAME!"
+Hello Earth!
+```
+~~~
+
+### Ignoring parts of the output
+
+Parts of the inline output can be ignored with `...`:
+
+~~~
+```shell-session tesh-session="ignore"
+$ echo "Hello from Space!"
+Hello ... Space!
+```
+~~~
+
+The same can be done for multiple lines of output. Note that trailing whitespace in every line is trimmed.
+
+~~~
+```shell-session tesh-session="ignore"
+$ printf "Hello \nthere \nfrom \nSpace!"
+Hello
 ...
-Error: No such option: --foo
-``
+Space!
+```
 ~~~
 
-The first line of the code block allows you to set a few directives:
+## Advanced directives
 
-- ``tesh-session`` marks a block testable. It's a unique identifier that allows for multiple code blocks to share the same session.
-- ``tesh-exitcodes`` optional list of exit codes in the order of commands executed inside the code block.
-- ``tesh-setup`` optional filename allows you to run a script to setup the environment without showing polluting the Markdown file.
-- ``tesh-ps1`` sets additional PS1 prompts that are supported besides ``$``.
-- ``tesh-platform`` optional parameter to specify on which platforms should this session block be tested. Examples: linux, darwin, windows
-- ``...`` used in a newline is a wildcard matching 0 or more lines
-- ``...`` used inside a line is a wildcard matching 0 or more chars
+You can set a few other optional directives in the header line:
+
+- `tesh-exitcodes`: a list of exit codes in the order of commands executed inside the code block,
+- `tesh-setup`: a filename of a script to run before running the commands in the code block,
+- `tesh-ps1`: allow an additional PS1 prompt besides the default `$`,
+- `tesh-platform`: specify on which platforms this session block should be tested (`linux`, `darwin`, `windows`).
+
+Let's look at all of these through examples
+
+### Testing exit codes
+
+`tesh-exitcodes` accepts a list of integers, which represent the exit code for every command in the block.
+
+~~~
+```shell-session tesh-session="exitcodes" tesh-exitcodes="1 0"
+$ false
+
+$ true
+
+```
+~~~
+
+
+### Test setup
+
+Sometimes you need to do some test setup before running the examples in your code blocks. Put those [in a file](./readme.sh) and point to it with the `tesh-setup` directive.
+
+~~~
+```shell-session tesh-session="setup" tesh-setup="readme.sh"
+$ echo "Hello $NAME!"
+Hello Gaea!
+```
+~~~
+
+
+### Custom prompts
+
+TODO
+
+~~~
+```shell-session tesh-session="prompt" tesh-ps1="foo"
+$ echo "foo"
+foo
+```
+~~~
+
+### Only run on certain platforms
+
+TODO
+
+~~~
+```shell-session tesh-session="platform" tesh-platform="darwin"
+$ echo "foo"
+foo
+```
+~~~
 
 
 ## Usage

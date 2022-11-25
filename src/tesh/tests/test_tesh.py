@@ -252,3 +252,22 @@ def test_fixture() -> None:
     # fmt: on
 
     assert expected == result.output
+
+
+def test_prompt() -> None:
+    """Test using tesh-ps1 to detect a custom PS1 prompt."""
+    runner = CliRunner()
+    result = runner.invoke(tesh, "src/tesh/tests/fixtures/prompt.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/prompt.md
+  ✨ Running foo  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
