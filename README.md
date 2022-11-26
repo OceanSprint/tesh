@@ -113,7 +113,9 @@ You can set a few other optional directives in the header line:
 - `tesh-setup`: a filename of a script to run before running the commands in the code block,
 - `tesh-ps1`: allow an additional PS1 prompt besides the default `$`,
 - `tesh-platform`: specify on which platforms this session block should be tested (`linux`, `darwin`, `windows`),
-- `tesh-fixture`: a filename to save the current snippet.
+- `tesh-fixture`: a filename to save the current snippet,
+- `tesh-timeout`: number of seconds before a command timeouts (defaults to 30s),
+- `tesh-timeout-expected`: if set to `yes` or `true`, the last command is expected to timeout after `tesh-timeout`.
 
 Let's look at all of these through examples
 
@@ -223,6 +225,8 @@ $ pip install tesh
 | Reference fixtures from other snippets   | ✔️ | ✖️ | ✖️ |
 | Wildcard matching of the command output  | ✔️ | ✖️ | ✖️ |
 | Starts the shell in debugging mode       | ✔️ | ✖️ | ✖️ |
+| Specify timeout                          | ✔️ | ✖️ | ✖️ |
+| Allow the last command to hang           | ✔️ | ✖️ | ✖️ |
 
 * ✔️: Supported
 * C: Possible but you have to write some code yourself
