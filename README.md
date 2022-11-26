@@ -40,6 +40,7 @@ $ tesh demo/
   ✨ Running bar  ✅ Passed
 📄 Checking demo/sad.md
   ✨ Running foo  ❌ Failed
+         Command: echo "foo"
 
          Expected:
 sad panda
