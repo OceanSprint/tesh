@@ -79,4 +79,8 @@ tesh:
 test: tests
 
 .PHONY: tests
-tests: lint types unit tesh
+tests:
+	@make lint all=true
+	@make types
+	@make unit
+	@make tesh
