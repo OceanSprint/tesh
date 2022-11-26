@@ -47,6 +47,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
             except pexpect.exceptions.TIMEOUT:  # pragma: no cover
                 print("❌ Timed out after 30s")  # noqa: ENC100
                 print()
+                print("         Command:", block.command)
                 print("         Output:")
                 print(shell.before.decode("utf-8").strip().replace("\r\n", "\n"))
                 if debug:
@@ -71,6 +72,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
 
             if not fnmatch.fnmatch(actual_output, expected_match):
                 print("❌ Failed")  # noqa: ENC100
+                print("         Command:", block.command)
                 print()
                 print("         Expected:")
                 print(expected_output)
@@ -91,6 +93,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
             exitcode = int(shell.before.decode("utf-8").strip())
             if session.exitcodes and exitcode != session.exitcodes[index]:
                 print("❌ Failed")  # noqa: ENC100
+                print("         Command:", block.command)
                 print()
                 print("         Expected exit code:", session.exitcodes[index])
                 print("         Got exit code:", exitcode)

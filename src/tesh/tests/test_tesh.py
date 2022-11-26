@@ -133,6 +133,7 @@ def test_fail() -> None:
 """
 📄 Checking src/tesh/tests/fixtures/fail.md
   ✨ Running foo  ❌ Failed
+         Command: echo "foo"
 
          Expected:
 bar
@@ -174,6 +175,7 @@ def test_exitcodes() -> None:
 📄 Checking src/tesh/tests/fixtures/exitcodes.md
   ✨ Running foo  ✅ Passed
   ✨ Running bar  ❌ Failed
+         Command: false
 
          Expected exit code: 0
          Got exit code: 1
