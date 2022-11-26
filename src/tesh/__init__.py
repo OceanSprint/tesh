@@ -53,7 +53,7 @@ def tesh(paths: t.Set[str], ext: str, verbose: bool, debug: bool) -> None:
                         fail("Setup file does not exist:", setup)
                     shutil.copyfile(setup, tmpdir / session.setup)
                 with changedir(tmpdir):
-                    print("  ✨ Running", session.id_, " ", end="")  # noqa: ENC100
+                    print("  ✨ Running", session.id_, " ", end="", flush=True)  # noqa: ENC100
                     extract_blocks(session, verbose)
                     write_fixtures(session)
                     test(filename, session, verbose, debug)
