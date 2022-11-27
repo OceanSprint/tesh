@@ -145,7 +145,7 @@ Hello Gaea!
 
 ### Custom prompts
 
-Sometimes you need to drop into a virtualenv or similar shell that changes the prompt. `tesh` supports this via `test-ps1` directive.
+Every so often you need to drop into a virtualenv or similar shell that changes the prompt. `tesh` supports this via `test-ps1` directive.
 
 ~~~
 ```shell-session tesh-session="prompt" tesh-ps1="(foo) $"
@@ -175,6 +175,24 @@ $ uname
 ```
 ~~~
 
+### Dump file to disk
+
+Occasionally your examples consist of first showing contents of a file, then executing a command that uses said file. This is supported, use the `tesh-fixture` directive.
+
+~~~
+```bash tesh-session="fixture" tesh-fixture="foo.sh"
+echo "foo"
+```
+~~~
+
+~~~
+```shell-session tesh-session="fixture"
+$ chmod +x foo.sh
+
+$ ./foo.sh
+foo
+```
+~~~
 
 ## Design decisions
 
