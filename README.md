@@ -115,9 +115,9 @@ You can set a few other optional directives in the header line:
 - `tesh-platform`: specify on which platforms this session block should be tested (`linux`, `darwin`, `windows`),
 - `tesh-fixture`: a filename to save the current snippet,
 - `tesh-timeout`: number of seconds before a command timeouts (defaults to 30s),
-- `tesh-timeout-expected`: if set to `yes` or `true`, the last command is expected to timeout after `tesh-timeout`.
+- `tesh-long-running`: set to `true` to showcase long-running commands such as `docker compose up`.
 
-Let's look at all of these through examples
+Let's look at all of these through examples!
 
 ### Testing exit codes
 
@@ -196,13 +196,31 @@ foo
 ```
 ~~~
 
+### Custom timeout
+
+By default, `tesh` will fail if an example command does not finish in 30 seconds. This number can be modified using the `tesh-timeout` directive.
+
+```shell-session tesh-session="timeout" tesh-timeout="3"
+$ sleep 1
+
+```
+
+### Long running processes
+
+Some processes that you want to show examples for are long-running processes, like `docker compose up`. They are supported in `tesh` blocks using the `tesh-long-running` directive. Note that they need to be the last command in the block.
+
+```shell-session tesh-session="long-running" tesh-timeout="1" tesh-long-running="true"
+$ ping 1.1.1.1
+PING 1.1.1.1 ...
+...
+```
+
 ## Installation
 
 The best way to install `tesh` is with your favorite Python package manager.
 
 ```bash
 $ pip install tesh
-```
 
 
 ## Design decisions
@@ -226,7 +244,7 @@ $ pip install tesh
 | Wildcard matching of the command output  | ✔️ | ✖️ | ✖️ |
 | Starts the shell in debugging mode       | ✔️ | ✖️ | ✖️ |
 | Specify timeout                          | ✔️ | ✖️ | ✖️ |
-| Allow the last command to hang           | ✔️ | ✖️ | ✖️ |
+| Support long-running commands            | ✔️ | ✖️ | ✖️ |
 
 * ✔️: Supported
 * C: Possible but you have to write some code yourself
