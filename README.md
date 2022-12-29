@@ -49,6 +49,8 @@ foo
 
 Taking you into the shell ...
 
+Enter `!!` to rerun the last command.
+
 $
 ```
 
