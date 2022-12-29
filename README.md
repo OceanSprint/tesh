@@ -33,7 +33,7 @@ Making sure that example still works over the years is painfully hard.
 
 Not anymore.
 
-```shell-session
+```console
 $ tesh demo/
 📄 Checking demo/happy.md
   ✨ Running foo  ✅ Passed
@@ -56,10 +56,10 @@ $
 
 To mark a code block as testable, append `tesh-session="NAME"` to the header line.
 
-You can use any syntax highlighting directives like `shell-session` or `console`.
+You can use any syntax highlighting directive, such as `bash`, `shell`, `shell-session`, `console` or others.
 
 ~~~
-```shell-session tesh-session="hello"
+```console tesh-session="hello"
 $ echo "Hello World!"
 Hello World!
 ```
@@ -70,14 +70,14 @@ Hello World!
 Besides marking a code block as testable, `tesh-session` is a unique identifier that allows for multiple code blocks to share the same session.
 
 ~~~
-```shell-session tesh-session="multiple_blocks"
+```console tesh-session="multiple_blocks"
 $ export NAME=Earth
 
 ```
 ~~~
 
 ~~~
-```shell-session tesh-session="multiple_blocks"
+```console tesh-session="multiple_blocks"
 $ echo "Hello $NAME!"
 Hello Earth!
 ```
@@ -88,7 +88,7 @@ Hello Earth!
 Parts of the inline output can be ignored with `...`:
 
 ~~~
-```shell-session tesh-session="ignore"
+```console tesh-session="ignore"
 $ echo "Hello from Space!"
 Hello ... Space!
 ```
@@ -97,7 +97,7 @@ Hello ... Space!
 The same can be done for multiple lines of output. Note that trailing whitespace in every line is trimmed.
 
 ~~~
-```shell-session tesh-session="ignore"
+```console tesh-session="ignore"
 $ printf "Hello \nthere \nfrom \nSpace!"
 Hello
 ...
@@ -122,7 +122,7 @@ Let's look at all of these through examples
 `tesh-exitcodes` accepts a list of integers, which represent the exit code for every command in the block.
 
 ~~~
-```shell-session tesh-session="exitcodes" tesh-exitcodes="1 0"
+```console tesh-session="exitcodes" tesh-exitcodes="1 0"
 $ false
 
 $ true
@@ -136,7 +136,7 @@ $ true
 Sometimes you need to do some test setup before running the examples in your code blocks. Put those [in a file](./readme.sh) and point to it with the `tesh-setup` directive.
 
 ~~~
-```shell-session tesh-session="setup" tesh-setup="readme.sh"
+```console tesh-session="setup" tesh-setup="readme.sh"
 $ echo "Hello $NAME!"
 Hello Gaea!
 ```
@@ -148,7 +148,7 @@ Hello Gaea!
 Every so often you need to drop into a virtualenv or similar shell that changes the prompt. `tesh` supports this via `test-ps1` directive.
 
 ~~~
-```shell-session tesh-session="prompt" tesh-ps1="(foo) $"
+```console tesh-session="prompt" tesh-ps1="(foo) $"
 $ PS1="(foo) $ "
 
 
@@ -162,14 +162,14 @@ hello
 Some examples should only run on certain platforms, use `tesh-platform` to declare them as such.
 
 ~~~
-```shell-session tesh-session="platform" tesh-platform="linux"
+```console tesh-session="platform" tesh-platform="linux"
 $ uname
 ...Linux...
 ```
 ~~~
 
 ~~~
-```shell-session tesh-session="platform" tesh-platform="darwin"
+```console tesh-session="platform" tesh-platform="darwin"
 $ uname
 ...Darwin...
 ```
@@ -186,7 +186,7 @@ echo "foo"
 ~~~
 
 ~~~
-```shell-session tesh-session="fixture"
+```console tesh-session="fixture"
 $ chmod +x foo.sh
 
 $ ./foo.sh
