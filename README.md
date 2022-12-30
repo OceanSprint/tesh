@@ -202,20 +202,25 @@ foo
 
 By default, `tesh` will fail if an example command does not finish in 30 seconds. This number can be modified using the `tesh-timeout` directive.
 
+~~~
 ```shell-session tesh-session="timeout" tesh-timeout="3"
 $ sleep 1
 
 ```
+~~~
+
 
 ### Long running processes
 
 Some processes that you want to show examples for are long-running processes, like `docker compose up`. They are supported in `tesh` blocks using the `tesh-long-running` directive. Note that they need to be the last command in the block.
 
+
+~~~
 ```shell-session tesh-session="long-running" tesh-timeout="1" tesh-long-running="true"
-$ ping 1.1.1.1
-PING 1.1.1.1 ...
-...
+$ nmap 1.1.1.1
+Starting Nmap ...
 ```
+~~~
 
 ## Installation
 
