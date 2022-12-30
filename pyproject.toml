@@ -93,3 +93,6 @@ ignore_missing_imports = true
 module = [
   "pexpect.*",
 ]
+
+[tool.pytest.ini_options]
+junit_duration_report = "call"
