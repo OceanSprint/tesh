@@ -223,7 +223,7 @@ The best way to install `tesh` is with your favorite Python package manager.
 
 ```bash
 $ pip install tesh
-
+```
 
 ## Design decisions
 
