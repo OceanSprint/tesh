@@ -12,7 +12,7 @@ def test_version() -> None:
     result = runner.invoke(tesh, "--version")
 
     assert result.exit_code == 0
-    assert "tesh, version 0.1.1\n" == result.output
+    assert "tesh, version 0.2.0\n" == result.output
 
 
 def test_empty_folder() -> None:
