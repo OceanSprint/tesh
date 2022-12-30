@@ -106,6 +106,7 @@ def compare_outputs(shell: pexpect.spawn, block: Block, debug: bool) -> None:
 
     if not fnmatch.fnmatch(actual_output, expected_output):
         print("❌ Failed")  # noqa: ENC100
+        print("         Command:", block.command)
         print()
         print("         Expected:")
         print(expected_output)

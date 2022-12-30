@@ -20,8 +20,8 @@ import typing as t
 @click.argument("paths", nargs=-1)
 @click.option("--ext", default="md", help="Extension of files to extract from.")
 @click.option("--verbose", is_flag=True, default=False)
-@click.option("--debug", "debug", flag_value=True, default=sys.stdin.isatty())
 @click.option("--no-debug", "debug", flag_value=False)
+@click.option("--debug", "debug", flag_value=True, default=sys.stdin.isatty())
 @click.version_option()
 def tesh(paths: t.Set[str], ext: str, verbose: bool, debug: bool) -> None:
     """Collect and test code blocks."""

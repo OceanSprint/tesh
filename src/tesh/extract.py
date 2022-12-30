@@ -67,7 +67,7 @@ def extract(
             k = 1
 
             # get all directives that start with tesh- and remove the prefix
-            directives = dict(re.findall(r'tesh-([a-z-]+)="([^"]+)"', lsline))
+            directives = dict(re.findall(r'tesh-([a-z0-9-]+)="([^"]+)"', lsline))
 
             # read the block
             code_lines = []
