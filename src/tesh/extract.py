@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from dataclasses import field
 from pathlib import Path
 
+import distutils.util
 import platform
 import re
 import sys
@@ -41,6 +42,8 @@ class ShellSession:
     setup: t.Union[str, None] = None
     exitcodes: list[int] = field(default_factory=lambda: [])
     fixtures: list[Fixture] = field(default_factory=lambda: [])
+    timeout: int = 30
+    long_running: bool = False
 
 
 def extract(
@@ -64,7 +67,7 @@ def extract(
             k = 1
 
             # get all directives that start with tesh- and remove the prefix
-            directives = dict(re.findall(r'tesh-(\w+)="([^"]+)"', lsline))
+            directives = dict(re.findall(r'tesh-([a-z0-9-]+)="([^"]+)"', lsline))
 
             # read the block
             code_lines = []
@@ -125,10 +128,17 @@ def extract(
                     if exitcodes:
                         session.exitcodes += exitcodes
 
-                    setup = directives.get("setup", None)
-                    if setup:
+                    if setup := directives.get("setup", None):
                         # TODO: should we also check if setup would be overridden?
                         session.setup = setup
+
+                    if timeout := directives.get("timeout"):
+                        session.timeout = int(timeout)
+
+                    if long_running := directives.get("long-running"):
+                        session.long_running = bool(
+                            distutils.util.strtobool(long_running)
+                        )
 
                 else:
                     sessions[id_] = ShellSession(
@@ -138,6 +148,12 @@ def extract(
                         ps1=ps1,
                         exitcodes=parse_exitcodes(directives.get("exitcodes", "")),
                         setup=directives.get("setup", None),
+                        timeout=int(directives.get("timeout", "30")),
+                        long_running=bool(
+                            distutils.util.strtobool(
+                                directives.get("long-running", "no")
+                            )
+                        ),
                     )
 
     return list(sessions.values())

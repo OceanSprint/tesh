@@ -53,6 +53,8 @@ commands:
           name: Install dependencies
           command: |
             poetry install --no-ansi
+            sudo apt update && sudo apt install nmap
+
       - save_cache:
           paths:
             - ./.venv
@@ -69,6 +71,11 @@ commands:
             make lint all=true
             make types
             make unit
+
+      - run:
+          name: Run tesh
+          command: |
+            poetry run tesh *.md
 
       - store_artifacts:
           path: htmlcov

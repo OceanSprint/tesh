@@ -29,8 +29,6 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
                 print("       Command:", block.command)
                 print("       Output:", block.output)
 
-            expected_output = "\n".join(block.output)
-
             shell.sendline(block.command)
             shell.expect(re.escape(block.command))
 
@@ -40,51 +38,31 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
             else:
                 prompt = session.blocks[index].prompt
             try:
-                shell.expect(re.escape(prompt))
+                shell.expect(re.escape(prompt), timeout=session.timeout)
 
             # This is tested in test_timeout but coverage doesn't catch it because
             # it is executed in a subshell
             except pexpect.exceptions.TIMEOUT:  # pragma: no cover
-                print("❌ Timed out after 30s")  # noqa: ENC100
+                if session.long_running:
+                    if index + 1 == len(session.blocks):
+                        compare_outputs(shell, block, debug)
+                        continue
+
+                print(
+                    "❌ Timed out after {timeout}s".format(  # noqa: ENC100
+                        timeout=session.timeout
+                    )
+                )
                 print()
                 print("         Command:", block.command)
                 print("         Output:")
-                print(shell.before.decode("utf-8").strip().replace("\r\n", "\n"))
+                print(get_actual_output(shell))
                 if debug:
                     invoke_debug(shell, block)
                 else:
                     sys.exit(1)
 
-            expected_match = (
-                expected_output.replace("*", "[*]")
-                .replace("?", "[?]")
-                .replace("...", "*")
-            )
-            actual_output = shell.before.decode("utf-8").strip().replace("\r\n", "\n")
-
-            # trim whitespace in every line
-            expected_output = "\n".join(
-                [line.rstrip() for line in expected_output.split("\n")]
-            )
-            actual_output = "\n".join(
-                [line.rstrip() for line in actual_output.split("\n")]
-            )
-
-            if not fnmatch.fnmatch(actual_output, expected_match):
-                print("❌ Failed")  # noqa: ENC100
-                print("         Command:", block.command)
-                print()
-                print("         Expected:")
-                print(expected_output)
-                print("         Got:")
-                print(actual_output)
-
-                # This is tested in test_debug but coverage doesn't catch it because
-                # it is executed in a subshell
-                if debug:  # pragma: no cover
-                    invoke_debug(shell, block)
-                else:
-                    sys.exit(1)
+            compare_outputs(shell, block, debug)
 
             # handle exit codes
             shell.sendline("echo $?")
@@ -101,6 +79,46 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
                     invoke_debug(shell, block)
                 else:
                     sys.exit(1)
+
+
+def get_actual_output(shell: pexpect.spawn) -> str:
+    """Massage shell output to be able to compare it."""
+    actual_output = shell.before.decode("utf-8").strip().replace("\r\n", "\n")
+    return "\n".join([line.rstrip() for line in actual_output.split("\n")])
+
+
+def get_expected_output(block: Block) -> str:
+    """Massage expected output to be able to compare it."""
+    expected_output = (
+        "\n".join(block.output)
+        .replace("*", "[*]")
+        .replace("?", "[?]")
+        .replace("...", "*")
+    )
+    # trim whitespace in every line
+    return "\n".join([line.rstrip() for line in expected_output.split("\n")])
+
+
+def compare_outputs(shell: pexpect.spawn, block: Block, debug: bool) -> None:
+    """Compare expected and the actual output and fail if they don't match."""
+    actual_output = get_actual_output(shell)
+    expected_output = get_expected_output(block)
+
+    if not fnmatch.fnmatch(actual_output, expected_output):
+        print("❌ Failed")  # noqa: ENC100
+        print("         Command:", block.command)
+        print()
+        print("         Expected:")
+        print(expected_output)
+        print("         Got:")
+        print(actual_output)
+
+        # This is tested in test_debug but coverage doesn't catch it because
+        # it is executed in a subshell
+        if debug:  # pragma: no cover
+            invoke_debug(shell, block)
+        else:
+            sys.exit(1)
 
 
 # This is tested in test_debug but coverage doesn't catch it because

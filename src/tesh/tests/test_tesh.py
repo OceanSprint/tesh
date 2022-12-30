@@ -159,7 +159,7 @@ def test_timeout() -> None:  # pragma: no cover
     shell = pexpect.spawn("tesh src/tesh/tests/fixtures/timeout.md")
     shell.expect("Taking you into the shell ...", timeout=60)
 
-    assert "✨ Running foo  ❌ Timed out after 30s".encode() in shell.before
+    assert "✨ Running foo  ❌ Timed out after 1s".encode() in shell.before
 
 
 def test_exitcodes() -> None:
