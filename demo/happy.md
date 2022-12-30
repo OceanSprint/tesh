@@ -1,11 +1,11 @@
 # Happy path
 
-```shell-session tesh-session="foo"
+```console tesh-session="foo"
 $ echo "foo"
 foo
 ```
 
-```shell-session tesh-session="bar"
+```console tesh-session="bar"
 $ echo "bar"
 bar
 ```

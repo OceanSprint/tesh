@@ -4,7 +4,7 @@
 1 + 1
 ```
 
-```shell-session tesh-session="foo"
+```console tesh-session="foo"
 $ cat foo.py
 1 + 1
 ```
