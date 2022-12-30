@@ -203,7 +203,7 @@ foo
 By default, `tesh` will fail if an example command does not finish in 30 seconds. This number can be modified using the `tesh-timeout` directive.
 
 ~~~
-```shell-session tesh-session="timeout" tesh-timeout="3"
+```console tesh-session="timeout" tesh-timeout="3"
 $ sleep 1
 
 ```
@@ -216,7 +216,7 @@ Some processes that you want to show examples for are long-running processes, li
 
 
 ~~~
-```shell-session tesh-session="long-running" tesh-timeout="1" tesh-long-running="true"
+```console tesh-session="long-running" tesh-timeout="1" tesh-long-running="true"
 $ nmap 1.1.1.1
 Starting Nmap ...
 ```
