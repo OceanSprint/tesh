@@ -128,6 +128,8 @@ def invoke_debug(shell: pexpect.spawn, block: Block) -> None:  # pragma: no cove
     print()
     print("Taking you into the shell ...")
     print()
+    print("Enter `!!` to rerun the last command.")
+    print()
     print(block.prompt, end="")
     shell.interact()
 
