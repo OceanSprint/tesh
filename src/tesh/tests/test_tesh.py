@@ -73,8 +73,8 @@ def test_verbose() -> None:
 """
 📄 Checking src/tesh/tests/fixtures/folder/simple.md
   ✨ Running foo  :
-       Command: echo "foo"
-       Output: ['foo']
+       Command: echo "foo ✨"
+       Output: ['foo ✨']
 ✅ Passed
 """
     ).lstrip("\n")
@@ -148,18 +148,20 @@ foo
 
 def test_debug() -> None:  # pragma: no cover
     """Test dropping into an interactive shell on error."""
-    shell = pexpect.spawn("tesh src/tesh/tests/fixtures/debug.md")
+    shell = pexpect.spawn("tesh src/tesh/tests/fixtures/debug.md", encoding="utf-8")
     shell.expect("Taking you into the shell ...")
 
-    assert "✨ Running foo  ❌ Failed".encode() in shell.before
+    assert isinstance(shell.before, str)
+    assert "✨ Running foo  ❌ Failed" in shell.before
 
 
 def test_timeout() -> None:  # pragma: no cover
     """Test dropping into an interactive shell on timeout."""
-    shell = pexpect.spawn("tesh src/tesh/tests/fixtures/timeout.md")
+    shell = pexpect.spawn("tesh src/tesh/tests/fixtures/timeout.md", encoding="utf-8")
     shell.expect("Taking you into the shell ...", timeout=60)
 
-    assert "✨ Running foo  ❌ Timed out after 1s".encode() in shell.before
+    assert isinstance(shell.before, str)
+    assert "✨ Running foo  ❌ Timed out after 1s" in shell.before
 
 
 def test_exitcodes() -> None:
