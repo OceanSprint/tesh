@@ -16,3 +16,6 @@ junit.xml
 
 # Editors
 .vscode
+
+# pyc
+__pycache__
