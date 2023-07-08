@@ -37,7 +37,8 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
                 print("       Output:", block.output)
 
             shell.sendline(block.command)
-            shell.expect(re.escape(block.command))
+            for command_line in block.command.splitlines():
+                shell.expect_exact(command_line)
 
             # we expect the prompt of the next command unless there's no more
             if index + 1 < len(session.blocks):
