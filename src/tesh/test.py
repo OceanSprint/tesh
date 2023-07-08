@@ -18,6 +18,12 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
         shell = pexpect.spawn(
             "bash --norc --noprofile",
             env={"PS1": "$ ", "PATH": os.environ["PATH"], "HOME": os.getcwd()},
+            # The (height, width) of the TTY commands run in. 24 is the default.
+            # The width needs to be larger than the longest command, as
+            # otherwise the command string gets truncated and the shell.expect
+            # calls fail to match the the pattern's full command against the
+            # truncated output.
+            dimensions=(24, 1000),
         )
         shell.expect(r"\$ ")
         if session.setup:
