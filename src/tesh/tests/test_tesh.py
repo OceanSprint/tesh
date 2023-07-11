@@ -340,3 +340,27 @@ def test_wildcards() -> None:
     # fmt: on
 
     assert expected == result.output
+
+
+def test_whitespace() -> None:
+    """Test code blocks with whitespace.
+
+    Both whitespace in command output, and indented code blocks.
+    """
+    runner = CliRunner()
+    result = runner.invoke(tesh, "src/tesh/tests/fixtures/whitespace.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/whitespace.md
+  ✨ Running non-indented-block  ✅ Passed
+  ✨ Running indented-block  ✅ Passed
+  ✨ Running extra-trailing-whitespace  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output

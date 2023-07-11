@@ -38,7 +38,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
 
             shell.sendline(block.command)
             for command_line in block.command.splitlines():
-                shell.expect_exact(command_line)
+                shell.expect_exact(command_line + "\r\n")
 
             # we expect the prompt of the next command unless there's no more
             if index + 1 < len(session.blocks):
@@ -93,7 +93,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
 def get_actual_output(shell: pexpect.spawn) -> str:
     """Massage shell output to be able to compare it."""
     assert isinstance(shell.before, str)
-    actual_output = shell.before.strip().replace("\r\n", "\n")
+    actual_output = shell.before.rstrip().replace("\r\n", "\n")
     return "\n".join([line.rstrip() for line in actual_output.split("\n")])
 
 
