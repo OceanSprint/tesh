@@ -1,0 +1,16 @@
+name: "Uncommitted Changes"
+description:
+  Fail if any uncommitted changes are detected.
+
+runs:
+  using: "composite"
+  steps:
+    - uses: tj-actions/verify-changed-files@v14
+      id: verify-changed-files
+
+    - name: List all changed files tracked and untracked files
+      if: steps.verify-changed-files.outputs.files_changed == 'true'
+      shell: bash
+      run: |
+        echo "Changed files: ${{ steps.verify-changed-files.outputs.changed_files }}"
+        exit 1

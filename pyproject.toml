@@ -26,11 +26,11 @@ pexpect = "*"
 
 [tool.poetry.dev-dependencies]
 autoflake = "*"
-black = "==22.6.0"  # remove pin after upgrading to nixpkgs-22.11
-codespell = "==2.1.0"  # remove pin after upgrading to nixpkgs-22.11
+black = "*"
+codespell = "*"
 coverage = "*"
 docutils = "*"
-flake8 = "==5.0.4"
+flake8 = "*"
 flake8-assertive = "*"
 flake8-blind-except = "*"
 flake8-bugbear = "*"
@@ -47,12 +47,12 @@ flake8-super-call = "*"
 flake8-tuple = "*"
 isort = "*"
 mccabe = "*"
-mypy = "==0.971"  # remove dependency after upgrading to nixpkgs-22.11
+mypy = "*"
 pdbpp = "*"
 pre-commit = "*"
 pre-commit-hooks = "*"
 pyfakefs = "*"
-pytest = "==7.1.2"  # remove pin after upgrading to nixpkgs-22.11
+pytest = "*"
 pytest-cov = "*"
 pytest-instafail = "*"
 pytest-randomly = "*"
@@ -63,8 +63,8 @@ yamllint = "*"
 
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
 
 
 [tool.autoflake]

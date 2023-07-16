@@ -1,0 +1,55 @@
+# Run all tests, linters, code analysis and other QA tasks on
+# every push to main and PRs.
+#
+# To SSH into the runner to debug a failure, add the following step before
+# the failing step
+#    - uses: lhotari/action-upterm@v1
+#      with:
+#        limit-access-to-actor: true
+
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+
+# Prevent multiple jobs running after fast subsequent pushes
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+
+  tests:
+    strategy:
+      matrix:
+        python: ["python3.9", "python3.10", "python3.11"]
+
+    name: Tests
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/nix-shell
+        with:
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
+
+      - name: Install Poetry environment
+        env:
+          PYTHON: ${{ matrix.python }}
+        run: |
+          nix-shell --run "poetry env use $PYTHON"
+          nix-shell --run "poetry install"
+
+      - name: Run linters and unit tests
+        run: |
+          nix-shell --run "make lint all=true"
+          nix-shell --run "make types"
+          nix-shell --run "make unit"
+          nix-shell --run "make tesh"
+
+      - uses: ./.github/actions/uncommitted-changes
