@@ -11,7 +11,7 @@ ignore =
 # D204: 1 blank line required after class docstring
     D204,
 # D101: Missing docstring in __init__
-    /__init__/* : D101,
+    D101,
 # D107: Missing docstring in __init__
     D107,
 # W503: line break before binary operator

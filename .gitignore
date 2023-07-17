@@ -1,5 +1,6 @@
 # poetry env
 .venv
+__pycache__
 
 # mypy
 .mypy_cache/

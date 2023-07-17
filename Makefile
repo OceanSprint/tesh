@@ -1,15 +1,8 @@
 # Convenience makefile to build the dev env and run common commands
+PYTHON ?= python3.11
 
 .PHONY: all
 all: tests
-
-# Lock version pins for Python dependencies
-.PHONY: lock
-lock:
-	@rm -rf .venv/
-	@poetry lock --no-update
-	@rm -rf .venv/
-	@nix-shell --run true
 
 # Testing and linting targets
 all = false
@@ -72,8 +65,7 @@ endif
 
 .PHONY: tesh
 tesh:
-	# TODO: add `poetry run`
-	@tesh *.md
+	@poetry run tesh *.md
 
 .PHONY: test
 test: tests
