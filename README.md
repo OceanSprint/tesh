@@ -107,6 +107,17 @@ Space!
 ```
 ~~~
 
+Commands can continue across multiple lines by prefixing lines with `> `.
+
+~~~
+```console tesh-session="ignore"
+$ echo "Hello from" \
+>   "another" \
+>   "line!"
+Hello from another line!
+```
+~~~
+
 ## Advanced directives
 
 You can set a few other optional directives in the header line:

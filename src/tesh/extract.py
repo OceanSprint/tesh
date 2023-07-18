@@ -181,6 +181,8 @@ def extract_blocks(session: ShellSession, verbose: bool) -> None:
                 r"^" + get_prompt_regex(session), "", line
             ).strip()
             new_block.prompt = m.group(0)
+        elif m := re.match("^> (.*)$", line):
+            new_block.command += f"\n{m.group(1)}"
         elif not line.strip():
             continue
         else:

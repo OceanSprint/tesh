@@ -302,3 +302,22 @@ def test_long_commands() -> None:
     # fmt: on
 
     assert expected == result.output
+
+
+def test_multiline_command() -> None:
+    """Test using `> ` to extend a command across more than one line."""
+    runner = CliRunner()
+    result = runner.invoke(tesh, "src/tesh/tests/fixtures/multiline_command.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/multiline_command.md
+  ✨ Running readme-example  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
