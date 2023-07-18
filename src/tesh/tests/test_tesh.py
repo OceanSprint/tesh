@@ -281,3 +281,22 @@ def test_prompt() -> None:
     # fmt: on
 
     assert expected == result.output
+
+
+def test_long_commands() -> None:
+    """Test lengthy commands, which can be truncated if they're too long."""
+    runner = CliRunner()
+    result = runner.invoke(tesh, "src/tesh/tests/fixtures/long_command.md")
+
+    assert result.exit_code == 0
+
+    # fmt: off
+    expected = (
+"""
+📄 Checking src/tesh/tests/fixtures/long_command.md
+  ✨ Running long-cmds  ✅ Passed
+"""
+    ).lstrip("\n")
+    # fmt: on
+
+    assert expected == result.output
