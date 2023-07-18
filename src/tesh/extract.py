@@ -186,7 +186,7 @@ def extract_blocks(session: ShellSession, verbose: bool) -> None:
         elif not line.strip():
             continue
         else:
-            new_block.output.append(line.strip())
+            new_block.output.append(line.rstrip("\n"))
     blocks.append(new_block)
     session.blocks = blocks
 
