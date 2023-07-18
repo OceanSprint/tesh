@@ -17,6 +17,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
     with Path(filename).parent:
         shell = pexpect.spawn(
             "bash --norc --noprofile",
+            encoding="utf-8",
             env={"PS1": "$ ", "PATH": os.environ["PATH"], "HOME": os.getcwd()},
             # The (height, width) of the TTY commands run in. 24 is the default.
             # The width needs to be larger than the longest command, as
@@ -74,7 +75,8 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
             shell.sendline("echo $?")
             shell.expect("echo [$][?]")
             shell.expect(re.escape(prompt))
-            exitcode = int(shell.before.decode("utf-8").strip())
+            assert isinstance(shell.before, str)
+            exitcode = int(shell.before.strip())
             if session.exitcodes and exitcode != session.exitcodes[index]:
                 print("❌ Failed")  # noqa: ENC100
                 print("         Command:", block.command)
@@ -89,7 +91,8 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
 
 def get_actual_output(shell: pexpect.spawn) -> str:
     """Massage shell output to be able to compare it."""
-    actual_output = shell.before.decode("utf-8").strip().replace("\r\n", "\n")
+    assert isinstance(shell.before, str)
+    actual_output = shell.before.strip().replace("\r\n", "\n")
     return "\n".join([line.rstrip() for line in actual_output.split("\n")])
 
 
