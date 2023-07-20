@@ -1,5 +1,20 @@
 ## Changelog
 
+0.3.0 (2023-XX-XX)
+------------------
+
+* ANSI escape code is filtered out to not have to write code blocks with ANSI
+  escape sequences, since they are not displayed properly by most of the
+  Markdown highligthers, refs #45.
+  [garbas]
+
+* Allowing `...` to be used in `PS1` (`tesh-ps1`), refs #45.
+  [garbas]
+
+* Running examples in CI, refs #45.
+  [garbas]
+
+
 0.2.0 (2022-12-30)
 ------------------
 
