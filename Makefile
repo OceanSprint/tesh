@@ -67,6 +67,11 @@ endif
 tesh:
 	@poetry run tesh *.md
 
+.PHONY: examples
+examples:
+	@poetry run tesh examples/happy.md
+	@poetry run tesh examples/nix-shell.md
+
 .PHONY: test
 test: tests
 
@@ -76,3 +81,4 @@ tests:
 	@make types
 	@make unit
 	@make tesh
+	@make examples

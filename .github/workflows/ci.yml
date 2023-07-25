@@ -51,5 +51,6 @@ jobs:
           nix-shell --run "make types"
           nix-shell --run "make unit"
           nix-shell --run "make tesh"
+          nix-shell --run "make examples"
 
       - uses: ./.github/actions/uncommitted-changes
