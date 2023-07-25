@@ -12,10 +12,37 @@ import re
 import sys
 
 
+class ANSIExpecter(pexpect.Expecter):
+    # regex for vt100 from https://stackoverflow.com/a/14693789/5008284
+    ansi_escape = re.compile(r'(\x1B[@-_][0-?]*[ -/]*[@-~]|\\[\[\]])')
+
+    def new_data(self, data):
+        data = self.ansi_escape.sub('', data)
+        return pexpect.Expecter.new_data(self, data)
+
+
+class spawn(pexpect.spawn):
+    def expect_list(self, pattern_list, timeout=-1, searchwindowsize=-1,
+                    async_=False, **kw):
+        if timeout == -1:
+            timeout = self.timeout
+        if 'async' in kw:
+            async_ = kw.pop('async')
+        if kw:
+            raise TypeError("Unknown keyword arguments: {}".format(kw))
+
+        exp = ANSIExpecter(self, pexpect.expect.searcher_re(pattern_list), searchwindowsize)
+        if async_:
+            from ._async import expect_async
+            return expect_async(exp, timeout)
+        else:
+            return exp.expect_loop(timeout)
+
+
 def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> None:
     """Run testable sessions in a pexpect shell."""
     with Path(filename).parent:
-        shell = pexpect.spawn(
+        shell = spawn(
             "bash --norc --noprofile",
             encoding="utf-8",
             env={"PS1": "$ ", "PATH": os.environ["PATH"], "HOME": os.getcwd()},
@@ -90,7 +117,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
                     sys.exit(1)
 
 
-def get_actual_output(shell: pexpect.spawn) -> str:
+def get_actual_output(shell: spawn) -> str:
     """Massage shell output to be able to compare it."""
     assert isinstance(shell.before, str)
     actual_output = shell.before.rstrip().replace("\r\n", "\n")
@@ -110,7 +137,7 @@ def get_expected_output(block: Block) -> str:
     return "\n".join([line.rstrip() for line in expected_output.split("\n")])
 
 
-def compare_outputs(shell: pexpect.spawn, block: Block, debug: bool) -> None:
+def compare_outputs(shell: spawn, block: Block, debug: bool) -> None:
     """Compare expected and the actual output and fail if they don't match."""
     actual_output = get_actual_output(shell)
     expected_output = get_expected_output(block)
@@ -134,7 +161,7 @@ def compare_outputs(shell: pexpect.spawn, block: Block, debug: bool) -> None:
 
 # This is tested in test_debug but coverage doesn't catch it because
 # it is executed in a subshell
-def invoke_debug(shell: pexpect.spawn, block: Block) -> None:  # pragma: no cover
+def invoke_debug(shell: spawn, block: Block) -> None:  # pragma: no cover
     """Take the user to a debug shell."""
     print()
     print("Taking you into the shell ...")
