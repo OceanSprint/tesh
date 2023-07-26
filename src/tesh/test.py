@@ -16,7 +16,7 @@ class NoANSIExpecter(pexpect.Expecter):
     # regex for vt100 from https://stackoverflow.com/a/14693789/5008284
     ansi_escape = re.compile(r"(\x1B[@-_][0-?]*[ -/]*[@-~]|\\[\[\]])")
 
-    def new_data(self, data):
+    def new_data(self, data: str) -> int:
         """Filter out ANSI escape codeself.
 
         And then call original `pexpect.Expecter.new_data` function.
@@ -27,8 +27,13 @@ class NoANSIExpecter(pexpect.Expecter):
 
 class spawn(pexpect.spawn):
     def expect_list(
-        self, pattern_list, timeout=-1, searchwindowsize=-1, async_=False, **kw
-    ):
+        self,
+        pattern_list: list[str],
+        timeout: int = -1,
+        searchwindowsize: int = -1,
+        async_: bool = False,
+        **kw: bool,
+    ) -> int:
         """Use NoANSIExpecter to filter out ANSI escape code.
 
         We copied original `expect_list` function to be able to replace the
@@ -45,7 +50,7 @@ class spawn(pexpect.spawn):
             self, pexpect.expect.searcher_re(pattern_list), searchwindowsize
         )
         if async_:
-            from ._async import expect_async
+            from pexpect._async import expect_async
 
             return expect_async(exp, timeout)
         else:
