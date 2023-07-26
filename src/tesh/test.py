@@ -12,28 +12,41 @@ import re
 import sys
 
 
-class ANSIExpecter(pexpect.Expecter):
+class NoANSIExpecter(pexpect.Expecter):
     # regex for vt100 from https://stackoverflow.com/a/14693789/5008284
-    ansi_escape = re.compile(r'(\x1B[@-_][0-?]*[ -/]*[@-~]|\\[\[\]])')
+    ansi_escape = re.compile(r"(\x1B[@-_][0-?]*[ -/]*[@-~]|\\[\[\]])")
 
     def new_data(self, data):
-        data = self.ansi_escape.sub('', data)
+        """Filter out ANSI escape codeself.
+
+        And then call original `pexpect.Expecter.new_data` function.
+        """
+        data = self.ansi_escape.sub("", data)
         return pexpect.Expecter.new_data(self, data)
 
 
 class spawn(pexpect.spawn):
-    def expect_list(self, pattern_list, timeout=-1, searchwindowsize=-1,
-                    async_=False, **kw):
+    def expect_list(
+        self, pattern_list, timeout=-1, searchwindowsize=-1, async_=False, **kw
+    ):
+        """Use NoANSIExpecter to filter out ANSI escape code.
+
+        We copied original `expect_list` function to be able to replace the
+        Expecter.
+        """
         if timeout == -1:
             timeout = self.timeout
-        if 'async' in kw:
-            async_ = kw.pop('async')
+        if "async" in kw:
+            async_ = kw.pop("async")
         if kw:
             raise TypeError("Unknown keyword arguments: {}".format(kw))
 
-        exp = ANSIExpecter(self, pexpect.expect.searcher_re(pattern_list), searchwindowsize)
+        exp = NoANSIExpecter(
+            self, pexpect.expect.searcher_re(pattern_list), searchwindowsize
+        )
         if async_:
             from ._async import expect_async
+
             return expect_async(exp, timeout)
         else:
             return exp.expect_loop(timeout)
@@ -72,8 +85,10 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
                 prompt = session.blocks[index + 1].prompt
             else:
                 prompt = session.blocks[index].prompt
+            prompt = re.escape(prompt)
+            prompt = prompt.replace("\\.\\.\\.", "(?=\\r\\n(?!.*\\r\\n)).*")
             try:
-                shell.expect(re.escape(prompt), timeout=session.timeout)
+                shell.expect(prompt, timeout=session.timeout)
 
             # This is tested in test_timeout but coverage doesn't catch it because
             # it is executed in a subshell
@@ -102,7 +117,7 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
             # handle exit codes
             shell.sendline("echo $?")
             shell.expect("echo [$][?]")
-            shell.expect(re.escape(prompt))
+            shell.expect(prompt)
             assert isinstance(shell.before, str)
             exitcode = int(shell.before.strip())
             if session.exitcodes and exitcode != session.exitcodes[index]:
