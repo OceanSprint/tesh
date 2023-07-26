@@ -41,15 +41,15 @@ class spawn(pexpect.spawn):
         """
         if timeout == -1:
             timeout = self.timeout
-        if "async" in kw:
+        if "async" in kw:  # pragma: no cover
             async_ = kw.pop("async")
-        if kw:
+        if kw:  # pragma: no cover
             raise TypeError("Unknown keyword arguments: {}".format(kw))
 
         exp = NoANSIExpecter(
             self, pexpect.expect.searcher_re(pattern_list), searchwindowsize
         )
-        if async_:
+        if async_:  # pragma: no cover
             from pexpect._async import expect_async
 
             return expect_async(exp, timeout)
