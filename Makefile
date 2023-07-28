@@ -69,8 +69,7 @@ tesh:
 
 .PHONY: examples
 examples:
-	@poetry run tesh examples/happy.md
-	@poetry run tesh examples/nix-shell.md
+	@poetry run tesh examples/
 
 .PHONY: test
 test: tests

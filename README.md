@@ -34,11 +34,11 @@ Making sure that example still works over the years is painfully hard.
 Not anymore.
 
 ```console
-$ tesh examples/
-📄 Checking examples/happy.md
+$ tesh demo/
+📄 Checking demo/happy.md
   ✨ Running foo  ✅ Passed
   ✨ Running bar  ✅ Passed
-📄 Checking examples/sad.md
+📄 Checking demo/sad.md
   ✨ Running foo  ❌ Failed
          Command: echo "foo"
 
