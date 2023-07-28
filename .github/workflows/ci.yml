@@ -80,10 +80,16 @@ jobs:
           cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Verify git tag matches pyproject.toml version
+
         run: |
-          echo "$GITHUB_REF_NAME"
-          echo `nix-shell --run "poetry version --short"`
-          [[ "$GITHUB_REF_NAME" == `poetry version --short` ]] && exit 0 || exit 1
+          GIT_VERSION=$GITHUB_REF_NAME
+          POETRY_VERSION=`nix-shell --run "poetry version --short"`
+
+          echo $GIT_VERSION
+          echo $POETRY_VERSION
+
+          [[ "$GIT_VERSION" == "$POETRY_VERSION" ]] && exit 0 || exit 1
+
 
       - name: Build tesh wheel
         run: |
