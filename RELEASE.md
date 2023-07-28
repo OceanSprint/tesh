@@ -5,6 +5,6 @@
 1. Set the same version in `test_tesh.py`.
 1. `make tests`
 1. `git add -p && git ci -m "release VERSION"`
-1. `git push origin main` and wait for CircleCI to pass the build.
+1. `git push origin main` and wait for GitHub Actions to pass the build.
 1. `git tag VERSION`
 1. `git push --tags`

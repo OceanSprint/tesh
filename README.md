@@ -1,7 +1,7 @@
 <p align="center">
-  <a href="https://circleci.com/gh/OceanSprint/tesh">
-    <img alt="CircleCI for tesh (main branch)"
-         src="https://circleci.com/gh/OceanSprint/tesh.svg?style=shield">
+  <a href="https://github.com/OceanSprint/tesh/actions/workflows/ci.yml">
+    <img alt="CI for tesh (main branch)"
+         src="https://github.com/oceansprint/tesh/actions/workflows/ci.yml/badge.svg">
   </a>
   <img alt="Test coverage (main branch)"
        src="https://img.shields.io/badge/tests_coverage-100%25-brightgreen.svg">
