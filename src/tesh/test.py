@@ -18,7 +18,7 @@ class NoANSIExpecter(pexpect.Expecter):
     ansi_escape = re.compile(r"(\x1B[@-_][0-?]*[ -/]*[@-~]|\\[\[\]])")
 
     def new_data(self, data: str) -> int:
-        """Filter out ANSI escape codeself.
+        """Filter out ANSI escape code.
 
         And then call original `pexpect.Expecter.new_data` function.
         """
