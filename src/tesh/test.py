@@ -13,7 +13,8 @@ import sys
 
 
 class NoANSIExpecter(pexpect.Expecter):
-"""Custom Expecter to filter out ANSI escape code."""
+    """Custom Expecter to filter out ANSI escape code."""
+
     # regex for vt100 from https://stackoverflow.com/a/14693789/5008284
     ansi_escape = re.compile(r"(\x1B[@-_][0-?]*[ -/]*[@-~]|\\[\[\]])")
 
