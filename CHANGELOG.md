@@ -1,18 +1,30 @@
 ## Changelog
 
-0.3.0 (2023-XX-XX)
+0.3.0 (2023-07-28)
 ------------------
 
 * ANSI escape code is filtered out to not have to write code blocks with ANSI
   escape sequences, since they are not displayed properly by most of the
-  Markdown highligthers, refs #45.
+  Markdown highlighters, refs #45.
   [garbas]
-
+s
 * Allowing `...` to be used in `PS1` (`tesh-ps1`), refs #45.
   [garbas]
 
-* Running examples in CI, refs #45.
-  [garbas]
+* Handle unicode in examples, refs #39.
+  [h4l]
+
+* Widen the TTY to avoid truncating commands, refs #42.
+  [h4l]
+
+* Allow commands to continue across lines, refs #41.
+  [h4l]
+
+* Escape square brackets in fnmatch patterns, refs #38.
+  [h4l]
+
+* Respect leading whitespace in example output, refs #43.
+  [h4l]
 
 
 0.2.0 (2022-12-30)

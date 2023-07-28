@@ -15,6 +15,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - '*'
 
 
 # Prevent multiple jobs running after fast subsequent pushes
@@ -54,3 +56,40 @@ jobs:
           nix-shell --run "make examples"
 
       - uses: ./.github/actions/uncommitted-changes
+
+  release:
+    name: Release
+    needs: tests
+
+    # To test publishing to testpypi:
+    # * comment out "verify git tag matches pyproject.toml version"
+    # * uncomment "with: repository-url: https://test.pypi.org/legacy/"
+
+    if:
+      github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/nix-shell
+        with:
+          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
+
+      - name: Verify git tag matches pyproject.toml version
+        run: |
+          echo "$GITHUB_REF_NAME"
+          echo `nix-shell --run "poetry version --short"`
+          [[ "$GITHUB_REF_NAME" == `poetry version --short` ]] && exit 0 || exit 1
+
+      - name: Build tesh wheel
+        run: |
+          nix-shell --run "poetry build"
+
+      - name: Upload wheel to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # with:
+        #   repository-url: https://test.pypi.org/legacy/
