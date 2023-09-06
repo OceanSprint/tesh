@@ -8,3 +8,10 @@
 1. `git push origin main` and wait for GitHub Actions to pass the build.
 1. `git tag VERSION`
 1. `git push --tags`
+
+
+# How to update the dependencies
+After adding the dependency to pyproject.toml refresh the dream2nix lock file via:
+```command
+nix run .#tesh.lock
+```

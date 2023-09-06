@@ -1,0 +1,41 @@
+{
+  "fetchPipMetadata": {
+    "sources": {
+      "click": {
+        "sha256": "ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/00/2e/d53fa4befbf2cfa713304affc7ca780ce4fc1fd8710527771b58311a3229/click-8.1.7-py3-none-any.whl",
+        "version": "8.1.7"
+      },
+      "pexpect": {
+        "sha256": "0b48a55dcb3c05f3329815901ea4fc1537514d6ba867a152b581d69ae3710937",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/39/7b/88dbb785881c28a102619d46423cb853b46dbccc70d3ac362d99773a78ce/pexpect-4.8.0-py2.py3-none-any.whl",
+        "version": "4.8.0"
+      },
+      "poetry-core": {
+        "sha256": "38e174cdb00a84ee4a1cab66a378b435747f72414f5573bc18cfc3850a94df38",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/bf/d4/ce72ac247f414d15ff046f0926b76eb42bd743e83c1df28e856f328e3db1/poetry_core-1.7.0-py3-none-any.whl",
+        "version": "1.7.0"
+      },
+      "ptyprocess": {
+        "sha256": "4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35",
+        "type": "url",
+        "url": "https://files.pythonhosted.org/packages/22/a6/858897256d0deac81a172289110f31629fc4cee19b6f01283303e18c8db3/ptyprocess-0.7.0-py2.py3-none-any.whl",
+        "version": "0.7.0"
+      }
+    },
+    "targets": {
+      "default": {
+        "click": [],
+        "pexpect": [
+          "ptyprocess"
+        ],
+        "poetry-core": [],
+        "ptyprocess": []
+      }
+    }
+  },
+  "invalidationHash": "1b590835d85257d6e5aff63b82b2180ad73028761f555c939917fa660d22d02a"
+}
