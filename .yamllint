@@ -1,3 +1,6 @@
 rules:
   line-length:
     max: 88
+
+ignore:
+  - .pre-commit-config.impure.yaml

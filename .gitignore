@@ -20,3 +20,7 @@ junit.xml
 
 # pyc
 __pycache__
+
+# nix stuff
+result
+.pre-commit-config.yaml

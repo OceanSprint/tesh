@@ -96,6 +96,8 @@ Hello ... Space!
 ```
 ~~~
 
+### Multiline support
+
 The same can be done for multiple lines of output. Note that trailing whitespace in every line is trimmed.
 
 ~~~
@@ -110,7 +112,7 @@ Space!
 Commands can continue across multiple lines by prefixing lines with `> `.
 
 ~~~
-```console tesh-session="ignore"
+```console tesh-session="multiline"
 $ echo "Hello from" \
 >   "another" \
 >   "line!"
@@ -273,11 +275,17 @@ $ pip install tesh
 
 ## Developing `tesh`
 
-You need to have [poetry](https://python-poetry.org/) and Python 3.9 through 3.11 installed on your machine.
+We provide two development environments for people working on this project, one based on [Nix](https://nixos.org/) and one based on [Poetry](https://www.docker.com/).
 
-Alternatively, if you use [nix](https://nix.dev/tutorials/declarative-and-reproducible-developer-environments), run `nix-shell` to drop into a shell that has everything prepared for development.
+For Nix, run `nix develop` to enter the development environment, where everything is ready for use.
 
-Then you can run `make tests` to run all tests & checks. Additional `make` commands are available:
+For Poetry, run the following:
+* `poetry install` to prepare the Python development environment
+* `pre-commit install --config .pre-commit-config.impure.yaml`
+
+Then you can run `make tests` to run all tests & checks.
+
+Additional `make` commands are available to run just a subset of tests or checks.
 
 ```
 # run tesh on all Markdown files
@@ -297,7 +305,16 @@ $ make unit
 
 # run a subset of unit tests (regex find)
 $ make unit filter=foo
+```
 
-# re-lock Python dependencies (for example after adding or removing one from pyproject.toml)
-$ make lock
+### Updating dependencies
+
+This is a bit more involved since the `poetry.lock` needs to work in both Nix and
+Docker environments, and also on multiple Python versions. This is how you do it:
+
+```
+# Comment out `poetry-core = "<1.1.0"` in `pyproject.toml`
+$ poetry lock --no-update
+# Uncomment out `poetry-core = "<1.1.0"` in `pyproject.toml`
+$ direnv reload
 ```

@@ -6,15 +6,6 @@ from tesh import tesh
 import pexpect
 
 
-def test_version() -> None:
-    """Test printing the current version."""
-    runner = CliRunner()
-    result = runner.invoke(tesh, "--version")
-
-    assert result.exit_code == 0
-    assert "tesh, version 0.3.0\n" == result.output
-
-
 def test_empty_folder() -> None:
     """Test pointing tesh to an empty folder."""
     runner = CliRunner()

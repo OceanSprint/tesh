@@ -1,6 +1,7 @@
 # Convenience makefile to build the dev env and run common commands
 PYTHON ?= python3.11
 
+
 .PHONY: all
 all: tests
 
@@ -14,7 +15,7 @@ lint:
 # 3. get all untracked files
 # 4. run pre-commit checks on them
 ifeq ($(all),true)
-	@pre-commit run --hook-stage push --all-files
+	@pre-commit run --all-files
 else
 	@{ git diff --name-only ./; git diff --name-only --staged ./;git ls-files --other --exclude-standard; } \
 		| sort -u | uniq | xargs pre-commit run --hook-stage push --files
@@ -69,7 +70,7 @@ tesh:
 
 .PHONY: examples
 examples:
-	@tesh examples/
+	@echo "You need nix-shell to run 'make examples'"
 
 .PHONY: test
 test: tests

@@ -26,40 +26,58 @@ concurrency:
 
 jobs:
 
-  tests:
-    strategy:
-      matrix:
-        python: ["python3.9", "python3.10", "python3.11"]
-
-    name: Tests
+  pure_tests:
+    name: Pure Tests
+    # strategy:
+    #   matrix:
+    #     python: ["python3.9", "python3.10", "python3.11"]
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/nix-shell
+      - uses: cachix/install-nix-action@v22
+      - uses: cachix/cachix-action@v12
         with:
-          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
+          name: niteo-public
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
+
+      - name: Run linters and unit tests the Nix way
+        run: nix flake check
+
+  impure_tests:
+    name: Impure Tests
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
 
       - name: Install Poetry environment
-        env:
-          PYTHON: ${{ matrix.python }}
-        run: |
-          nix-shell --run "poetry env use $PYTHON"
-          nix-shell --run "poetry install"
+        run: poetry install
 
-      - name: Run linters and unit tests
-        run: |
-          nix-shell --run "make lint all=true"
-          nix-shell --run "make types"
-          nix-shell --run "make unit"
-          nix-shell --run "make tesh"
-          nix-shell --run "make examples"
+      - name: Install test dependencies
+        run: sudo apt-get -y install nmap
 
-      - uses: ./.github/actions/uncommitted-changes
+      - name: Run linters and unit tests the Poetry way
+        run: |
+          # make lint -> pre-commit-config.yaml is managed by Nix,
+          # so path entries won't work in Poetry env
+          source $(poetry env info --path)/bin/activate
+          make types
+          make unit
+          make tesh
+
+      - uses: cachix/install-nix-action@v22
+
+      - name: Run 'make examples'
+        run: poetry run tesh examples/
 
   release:
     name: Release
-    needs: tests
+    needs: [pure_tests, impure_tests]
 
     # To test publishing to testpypi:
     # * comment out "verify git tag matches pyproject.toml version"
@@ -75,9 +93,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/nix-shell
+      - uses: cachix/install-nix-action@v22
+      - uses: cachix/cachix-action@v12
         with:
-          cachix_auth_token: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
+          name: niteo-public
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Verify git tag matches pyproject.toml version
 

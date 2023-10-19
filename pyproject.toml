@@ -4,7 +4,7 @@ version = "0.3.0"
 description = "TEstable SHell sessions in Markdown"
 readme = "README.md"
 authors = [
-	"Domen Kozar",
+  "Domen Kozar",
   "Nejc Zupan",
 ]
 license = "MIT"
