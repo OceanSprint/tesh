@@ -14,10 +14,10 @@ lint:
 # 3. get all untracked files
 # 4. run pre-commit checks on them
 ifeq ($(all),true)
-	@poetry run pre-commit run --hook-stage push --all-files
+	@pre-commit run --hook-stage push --all-files
 else
 	@{ git diff --name-only ./; git diff --name-only --staged ./;git ls-files --other --exclude-standard; } \
-		| sort -u | uniq | poetry run xargs pre-commit run --hook-stage push --files
+		| sort -u | uniq | xargs pre-commit run --hook-stage push --files
 endif
 
 .PHONY: type
@@ -25,8 +25,8 @@ type: types
 
 .PHONY: types
 types: .
-	@poetry run mypy src/tesh
-	@poetry run typecov 100 ./typecov/linecount.txt
+	@mypy src/tesh
+	@typecov 100 ./typecov/linecount.txt
 
 
 # anything, in regex-speak
@@ -58,18 +58,18 @@ endif
 .PHONY: unit
 unit:
 ifndef path
-	@poetry run pytest src/tesh $(verbosity) $(full_suite_args) $(pytest_args)
+	@pytest src/tesh $(verbosity) $(full_suite_args) $(pytest_args)
 else
-	@poetry run pytest $(path)
+	@pytest $(path)
 endif
 
 .PHONY: tesh
 tesh:
-	@poetry run tesh *.md
+	@tesh *.md
 
 .PHONY: examples
 examples:
-	@poetry run tesh examples/
+	@tesh examples/
 
 .PHONY: test
 test: tests
