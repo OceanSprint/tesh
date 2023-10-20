@@ -21,7 +21,7 @@
         inputs.pre-commit-hooks-nix.flakeModule
       ];
       systems = [ "x86_64-linux" "aarch64-darwin" ];
-      perSystem = { config, self', inputs', pkgs, system, ... }:
+      perSystem = { config, self', inputs', pkgs, system, lib, ... }:
 
         let
           autoflake = pkgs.python3Packages.autoflake.overrideAttrs (old: {
@@ -87,12 +87,31 @@
             testEnv = inputs.poetry2nix.legacyPackages.${system}.mkPoetryEnv {
               projectDir = ./.;
               preferWheels = true;
-              # editablePackageSources = {
-              #   src = ./src;
-              # };
             };
+
+            impure-check = pkgs.writeScriptBin "impure-check" ''
+              # run the impure-check in a temp dir that gets nuked
+              # if this script fails in any way
+              export TMPDIR=$(${pkgs.coreutils}/bin/mktemp -d)
+              trap "${pkgs.coreutils}/bin/chmod -R +w '$TMPDIR'; ${pkgs.coreutils}/bin/rm -rf '$TMPDIR'" EXIT
+
+              export PATH="${lib.makeBinPath [
+                pkgs.coreutils
+                pkgs.gnumake
+                pkgs.bash
+                pkgs.nix
+                pkgs.which
+                self'.packages.default
+              ]}"
+
+              cd $TMPDIR
+              cp -r ${./.}/* ./
+              make examples
+            '';
           };
 
+          # 'make lint' not needed since pre-commit is run by pre-commit flake-part
+          # 'make examples' is an impure test so it's done in `impure-check`
           checks.tests = pkgs.runCommand "tests" {
             buildInputs = self'.devShells.default.buildInputs;
           } ''
@@ -100,11 +119,9 @@
             chmod +w -R ./source
             cd ./source
             export PYTHONPATH="$(realpath ./src)"
-            # make lint -> not needed since we already have pre-commit checks defined above
             make types
             make unit
             make tesh
-            # make examples -> doesn't work because we can't run `nix-shell` inside nix flake check
             cp -r htmlcov $out/
           '';
 

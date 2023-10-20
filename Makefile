@@ -68,7 +68,7 @@ tesh:
 
 .PHONY: examples
 examples:
-	@echo "You need nix-shell to run 'make examples'"
+	@tesh examples/
 
 .PHONY: test
 test: tests
