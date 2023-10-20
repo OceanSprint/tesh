@@ -41,7 +41,7 @@ jobs:
       - name: Run linters and unit tests the Nix way
         run: |
           nix flake check
-          nix run .#impure-check
+          # nix run .#impure-check
 
   impure_tests:
     name: Impure Tests

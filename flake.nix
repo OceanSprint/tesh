@@ -27,6 +27,15 @@
           autoflake = pkgs.python3Packages.autoflake.overrideAttrs (old: {
             propagatedBuildInputs = old.propagatedBuildInputs ++ [ pkgs.python3Packages.tomli ];
           });
+
+          supportedPythons = [ "python39" "python310" "python311" ];
+          forAllPythons = name: f:
+            let
+              attrNames = (map (py: "${name}-${py}") supportedPythons);
+              outputs = lib.genAttrs supportedPythons
+                (python: f python);
+            in
+            lib.mapAttrs' (py: value: { name = "${name}-${py}"; inherit value; }) outputs;
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'
@@ -78,93 +87,116 @@
             types = [ "text" ];
           };
 
-          packages = {
-            default = inputs.poetry2nix.legacyPackages.${system}.mkPoetryApplication {
-              projectDir = ./.;
-              preferWheels = true;
-            };
+          packages =
+            (forAllPythons "default" (python:
+              inputs.poetry2nix.legacyPackages.${system}.mkPoetryApplication {
+                projectDir = ./.;
+                preferWheels = true;
+                python = pkgs.${python};
+              }))
 
-            testEnv = inputs.poetry2nix.legacyPackages.${system}.mkPoetryEnv {
-              projectDir = ./.;
-              preferWheels = true;
-            };
+            //
 
-            impure-check = pkgs.writeScriptBin "impure-check" ''
-              # run the impure-check in a temp dir that gets nuked
-              # if this script fails in any way
-              export TMPDIR=$(${pkgs.coreutils}/bin/mktemp -d)
-              trap "${pkgs.coreutils}/bin/chmod -R +w '$TMPDIR'; ${pkgs.coreutils}/bin/rm -rf '$TMPDIR'" EXIT
+            (forAllPythons "testEnv" (python:
+              inputs.poetry2nix.legacyPackages.${system}.mkPoetryEnv {
+                projectDir = ./.;
+                preferWheels = true;
+                python = pkgs.${python};
+              }))
 
-              export PATH="${lib.makeBinPath [
-                pkgs.coreutils
-                pkgs.gnumake
-                pkgs.bash
-                pkgs.nix
-                pkgs.which
-                self'.packages.default
-              ]}"
+            //
 
-              cd $TMPDIR
-              cp -r ${./.}/* ./
-              make examples
-            '';
-          };
+            (forAllPythons "impure-check" (python:
+              pkgs.writeScriptBin "impure-check" ''
+                # run the impure-check in a temp dir that gets nuked
+                # if this script fails in any way
+                export TMPDIR=$(${pkgs.coreutils}/bin/mktemp -d)
+                trap "${pkgs.coreutils}/bin/chmod -R +w '$TMPDIR'; ${pkgs.coreutils}/bin/rm -rf '$TMPDIR'" EXIT
+
+                export PATH="${lib.makeBinPath [
+                  pkgs.coreutils
+                  pkgs.gnumake
+                  pkgs.bash
+                  pkgs.nix
+                  pkgs.which
+                  self'.packages."default-${python}"
+                ]}"
+
+                cd $TMPDIR
+                cp -r ${./.}/* ./
+                make examples
+              ''
+            ));
 
           # 'make lint' not needed since pre-commit is run by pre-commit flake-part
           # 'make examples' is an impure test so it's done in `impure-check`
-          checks.tests = pkgs.runCommand "tests" {
-            buildInputs = self'.devShells.default.buildInputs;
-          } ''
-            cp -r ${./.} ./source
-            chmod +w -R ./source
-            cd ./source
-            export PYTHONPATH="$(realpath ./src)"
-            make types
-            make unit
-            make tesh
-            cp -r htmlcov $out/
-          '';
+          checks =
+            (forAllPythons "tests" (python:
+              pkgs.runCommand "tests"
+                {
+                  buildInputs = self'.devShells."default-${python}".buildInputs;
+                } ''
+                cp -r ${./.} ./source
+                chmod +w -R ./source
+                cd ./source
+                export PYTHONPATH="$(realpath ./src)"
+                make types
+                make unit
+                make tesh
+                cp -r htmlcov $out/
+              ''));
 
-          devShells.default = pkgs.mkShell {
-            name = "dev-shell";
+          devShells =
+            {default=self'.devShells.default-python310;}
 
-            buildInputs = with pkgs; [
-              poetry
-              self'.packages.testEnv
-              pkgs.glibcLocales
-              # python311
-              # python310
-              # python39
-              # gitAndTools.pre-commit
+            //
 
-              # test dependency
-              nmap
-            ];
+            (forAllPythons "default" (python:
+              let
+                testEnv = self'.packages."testEnv-${python}";
+              in
 
-            inputsFrom = [ config.pre-commit.devShell ];
+              pkgs.mkShell
+              {
+                name = "dev-shell";
 
-            shellHook = ''
-              tmp_path=$(realpath ./.direnv)
+                buildInputs = with pkgs; [
+                  poetry
+                  self'.packages."testEnv-${python}"
+                  pkgs.glibcLocales
+                  # python311
+                  # python310
+                  # python39
+                  # gitAndTools.pre-commit
 
-              source=$(realpath .)
-              mkdir -p "$tmp_path/python/${self'.packages.testEnv.sitePackages}"
+                  # test dependency
+                  nmap
+                ];
 
-              # Install the package in editable mode
-              # This allows executing `clan` from within the dev-shell using the current
-              # version of the code and its dependencies.
-              PYTHONPATH=${pkgs.python3Packages.poetry-core}/${self'.packages.testEnv.sitePackages}:${self'.packages.testEnv}/${self'.packages.testEnv.sitePackages} ${pkgs.python3Packages.pip}/bin/pip install \
-                --no-deps \
-                --disable-pip-version-check \
-                --no-index \
-                --no-build-isolation \
-                --prefix "$tmp_path/python" \
-                --editable $source
+                inputsFrom = [ config.pre-commit.devShell ];
 
-              export PATH="$tmp_path/python/bin:$PATH"
-              export PYTHONPATH="$source/src:$tmp_path/python/${self'.packages.testEnv.sitePackages}:${self'.packages.testEnv}/${self'.packages.testEnv.sitePackages}"
-            '';
+                shellHook = ''
+                  tmp_path=$(realpath ./.direnv)
 
-          };
+                  source=$(realpath .)
+                  mkdir -p "$tmp_path/python/${testEnv.sitePackages}"
+
+                  # Install the package in editable mode
+                  # This allows executing `clan` from within the dev-shell using the current
+                  # version of the code and its dependencies.
+                  PYTHONPATH=${pkgs.python3Packages.poetry-core}/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages} ${pkgs.python3Packages.pip}/bin/pip install \
+                    --no-deps \
+                    --disable-pip-version-check \
+                    --no-index \
+                    --no-build-isolation \
+                    --prefix "$tmp_path/python" \
+                    --editable $source
+
+                  export PATH="$tmp_path/python/bin:$PATH"
+                  export PYTHONPATH="$source/src:$tmp_path/python/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages}"
+                '';
+
+            }));
         };
     };
 }
