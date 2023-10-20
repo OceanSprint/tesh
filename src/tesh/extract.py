@@ -172,17 +172,20 @@ def extract_blocks(session: ShellSession, verbose: bool) -> None:
     new_block = Block("")  # TODO: rewrite this
     blocks = []
 
+    # We need to strip `> ` and `\` from commands to convert them from multiline
+    # to singleline commands, otherwise we get different outputs in
+    # different shells.
     for line in session.lines:
         if m := prompt.match(line):
             if new_block.command:
                 blocks.append(new_block)
             new_block = Block("")
-            new_block.command = re.sub(
-                r"^" + get_prompt_regex(session), "", line
-            ).strip()
+            new_block.command = (
+                re.sub(r"^" + get_prompt_regex(session), "", line).strip().rstrip("\\")
+            )
             new_block.prompt = m.group(0)
         elif m := re.match("^> (.*)$", line):
-            new_block.command += f"\n{m.group(1)}"
+            new_block.command += f"{m.group(1)}".rstrip("\\")
         elif not line.strip():
             continue
         else:
