@@ -1,6 +1,4 @@
 # Convenience makefile to build the dev env and run common commands
-PYTHON ?= python3.11
-
 
 .PHONY: all
 all: tests
