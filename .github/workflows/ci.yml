@@ -47,6 +47,7 @@ jobs:
           PYTHON: ${{ matrix.python }}
         run: |
           nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
+          nix build .#packages.x86_64-linux.impure-check-$(echo $PYTHON)
 
   impure_tests:
     name: Impure Tests

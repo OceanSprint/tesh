@@ -147,7 +147,7 @@
               ''));
 
           devShells =
-            {default=self'.devShells.default-python310;}
+            {default=self'.devShells.default-python311;}
 
             //
 
@@ -163,11 +163,6 @@
                 buildInputs = with pkgs; [
                   poetry
                   self'.packages."testEnv-${python}"
-                  pkgs.glibcLocales
-                  # python311
-                  # python310
-                  # python39
-                  # gitAndTools.pre-commit
 
                   # test dependency
                   nmap
@@ -184,7 +179,7 @@
                   # Install the package in editable mode
                   # This allows executing `clan` from within the dev-shell using the current
                   # version of the code and its dependencies.
-                  PYTHONPATH=${pkgs.python3Packages.poetry-core}/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages} ${pkgs.python3Packages.pip}/bin/pip install \
+                  PYTHONPATH=${pkgs."python${lib.replaceStrings ["python"] [""] python}Packages".poetry-core}/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages} ${pkgs."python${lib.replaceStrings ["python"] [""] python}Packages".pip}/bin/pip install \
                     --no-deps \
                     --disable-pip-version-check \
                     --no-index \

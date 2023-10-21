@@ -307,14 +307,23 @@ $ make unit
 $ make unit filter=foo
 ```
 
-### Updating dependencies
+### Multiple Python versions
 
-This is a bit more involved since the `poetry.lock` needs to work in both Nix and
-Docker environments, and also on multiple Python versions. This is how you do it:
+By default, the development environment uses the latest supported Python version. This is how you drop into an environment with an older Python
+
+On Linux:
+```
+$ nix develop .#devShells.x86_64-linux.default-python39
+```
+
+On macOS:
 
 ```
-# Comment out `poetry-core = "<1.1.0"` in `pyproject.toml`
-$ poetry lock --no-update
-# Uncomment out `poetry-core = "<1.1.0"` in `pyproject.toml`
-$ direnv reload
+$ nix develop .#devShells.aarch64-darwin.default-python39
 ```
+
+
+
+# TODO:
+
+* docker image
