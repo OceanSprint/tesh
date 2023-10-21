@@ -29,6 +29,10 @@ jobs:
   pure_tests:
     name: Pure Tests
 
+    strategy:
+      matrix:
+        python: ["python39", "python310", "python311"]
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,9 +43,10 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Run linters and unit tests the Nix way
+        env:
+          PYTHON: ${{ matrix.python }}
         run: |
-          nix flake check
-          # nix run .#impure-check
+          nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
 
   impure_tests:
     name: Impure Tests
