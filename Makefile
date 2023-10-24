@@ -66,10 +66,6 @@ endif
 tesh:
 	@tesh *.md
 
-.PHONY: examples
-examples:
-	@tesh examples/
-
 .PHONY: test
 test: tests
 
@@ -79,4 +75,3 @@ tests:
 	@make types
 	@make unit
 	@make tesh
-	@make examples

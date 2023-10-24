@@ -275,13 +275,11 @@ $ pip install tesh
 
 ## Developing `tesh`
 
-We provide two development environments for people working on this project, one based on [Nix](https://nixos.org/) and one based on [Poetry](https://www.docker.com/).
+We provide two development environments for people working on this project, one based on [Nix](https://nixos.org/) and one based on [Docker](https://www.docker.com/).
 
 For Nix, run `nix develop` to enter the development environment, where everything is ready for use.
 
-For Poetry, run the following:
-* `poetry install` to prepare the Python development environment
-* `pre-commit install --config .pre-commit-config.impure.yaml`
+For Docker, run `docker build -t tesh . && docker run --rm -v .:/tesh -it tesh` to enter the development environment, where everything is ready for use.
 
 Then you can run `make tests` to run all tests & checks.
 
@@ -326,4 +324,9 @@ $ nix develop .#devShells.aarch64-darwin.default-python39
 
 # TODO:
 
+* rename packages, so they are not default-python310, etc.
 * docker image
+* commands instead of docker actions
+
+
+* docker build .

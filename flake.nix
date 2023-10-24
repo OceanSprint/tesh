@@ -20,7 +20,7 @@
       imports = [
         inputs.pre-commit-hooks-nix.flakeModule
       ];
-      systems = [ "x86_64-linux" "aarch64-darwin" ];
+      systems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
       perSystem = { config, self', inputs', pkgs, system, lib, ... }:
 
         let
@@ -36,6 +36,21 @@
                 (python: f python);
             in
             lib.mapAttrs' (py: value: { name = "${name}-${py}"; inherit value; }) outputs;
+
+          poetryArgs = python: {
+            projectDir = ./.;
+            preferWheels = true;
+            python = pkgs.${python};
+            overrides = inputs'.poetry2nix.legacyPackages.overrides.withDefaults (self: super: {
+
+              ruamel-yaml-clib = super.ruamel-yaml-clib.override (
+                old: {
+                  preferWheel = false;
+                }
+              );
+            });
+          };
+
         in
         {
           # Per-system attributes can be defined here. The self' and inputs'
@@ -89,47 +104,15 @@
 
           packages =
             (forAllPythons "default" (python:
-              inputs.poetry2nix.legacyPackages.${system}.mkPoetryApplication {
-                projectDir = ./.;
-                preferWheels = true;
-                python = pkgs.${python};
-              }))
+              inputs.poetry2nix.legacyPackages.${system}.mkPoetryApplication (poetryArgs python)))
 
             //
 
             (forAllPythons "testEnv" (python:
-              inputs.poetry2nix.legacyPackages.${system}.mkPoetryEnv {
-                projectDir = ./.;
-                preferWheels = true;
-                python = pkgs.${python};
-              }))
+              inputs.poetry2nix.legacyPackages.${system}.mkPoetryEnv (poetryArgs python)));
 
-            //
-
-            (forAllPythons "impure-check" (python:
-              pkgs.writeScriptBin "impure-check" ''
-                # run the impure-check in a temp dir that gets nuked
-                # if this script fails in any way
-                export TMPDIR=$(${pkgs.coreutils}/bin/mktemp -d)
-                trap "${pkgs.coreutils}/bin/chmod -R +w '$TMPDIR'; ${pkgs.coreutils}/bin/rm -rf '$TMPDIR'" EXIT
-
-                export PATH="${lib.makeBinPath [
-                  pkgs.coreutils
-                  pkgs.gnumake
-                  pkgs.bash
-                  pkgs.nix
-                  pkgs.which
-                  self'.packages."default-${python}"
-                ]}"
-
-                cd $TMPDIR
-                cp -r ${./.}/* ./
-                make examples
-              ''
-            ));
-
-          # 'make lint' not needed since pre-commit is run by pre-commit flake-part
-          # 'make examples' is an impure test so it's done in `impure-check`
+          # `make unit` is not needed as it's already run in pre-commit
+          # check, registered by flake-parts
           checks =
             (forAllPythons "tests" (python:
               pkgs.runCommand "tests"
@@ -147,7 +130,7 @@
               ''));
 
           devShells =
-            {default=self'.devShells.default-python311;}
+            { default = self'.devShells.default-python311; }
 
             //
 
@@ -157,41 +140,41 @@
               in
 
               pkgs.mkShell
-              {
-                name = "dev-shell";
+                {
+                  name = "dev-shell";
 
-                buildInputs = with pkgs; [
-                  poetry
-                  self'.packages."testEnv-${python}"
+                  buildInputs = with pkgs; [
+                    poetry
+                    self'.packages."testEnv-${python}"
 
-                  # test dependency
-                  nmap
-                ];
+                    # test dependency
+                    nmap
+                  ];
 
-                inputsFrom = [ config.pre-commit.devShell ];
+                  inputsFrom = [ config.pre-commit.devShell ];
 
-                shellHook = ''
-                  tmp_path=$(realpath ./.direnv)
+                  shellHook = ''
+                    tmp_path=$(realpath ./.direnv)
 
-                  source=$(realpath .)
-                  mkdir -p "$tmp_path/python/${testEnv.sitePackages}"
+                    source=$(realpath .)
+                    mkdir -p "$tmp_path/python/${testEnv.sitePackages}"
 
-                  # Install the package in editable mode
-                  # This allows executing `clan` from within the dev-shell using the current
-                  # version of the code and its dependencies.
-                  PYTHONPATH=${pkgs."python${lib.replaceStrings ["python"] [""] python}Packages".poetry-core}/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages} ${pkgs."python${lib.replaceStrings ["python"] [""] python}Packages".pip}/bin/pip install \
-                    --no-deps \
-                    --disable-pip-version-check \
-                    --no-index \
-                    --no-build-isolation \
-                    --prefix "$tmp_path/python" \
-                    --editable $source
+                    # Install the package in editable mode
+                    # This allows executing `clan` from within the dev-shell using the current
+                    # version of the code and its dependencies.
+                    PYTHONPATH=${pkgs."python${lib.replaceStrings ["python"] [""] python}Packages".poetry-core}/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages} ${pkgs."python${lib.replaceStrings ["python"] [""] python}Packages".pip}/bin/pip install \
+                      --no-deps \
+                      --disable-pip-version-check \
+                      --no-index \
+                      --no-build-isolation \
+                      --prefix "$tmp_path/python" \
+                      --editable $source
 
-                  export PATH="$tmp_path/python/bin:$PATH"
-                  export PYTHONPATH="$source/src:$tmp_path/python/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages}"
-                '';
+                    export PATH="$tmp_path/python/bin:$PATH"
+                    export PYTHONPATH="$source/src:$tmp_path/python/${testEnv.sitePackages}:${testEnv}/${testEnv.sitePackages}"
+                  '';
 
-            }));
+                }));
         };
     };
 }

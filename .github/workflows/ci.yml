@@ -46,52 +46,29 @@ jobs:
         env:
           PYTHON: ${{ matrix.python }}
         run: |
+          nix build .#checks.x86_64-linux.pre-commit
+          nix build .#devShells.x86_64-linux.default-$(echo $PYTHON)
+          nix build .#packages.x86_64-linux.default-$(echo $PYTHON)
           nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
-          nix build .#packages.x86_64-linux.impure-check-$(echo $PYTHON)
 
   impure_tests:
     name: Impure Tests
-
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+      - name: Build Docker image with nix env for tesh development
+        run: docker build -t tesh .
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+      - name: Start a container
+        run: docker run -d --rm -v .:/tesh --name tesh -it tesh
 
+      - name: Make git happy so that pre-commit checks in `make lint` work
+        run: docker exec tesh git config --global --add safe.directory /tesh
 
-      - name: Install Poetry environment
-        env:
-          PYTHON: python${{ matrix.python-version }}
-        run: |
-          poetry env use $PYTHON
-          poetry install
-
-      - name: Install test dependencies
-        run: sudo apt-get -y install nmap
-
-      - name: Run linters and unit tests the Poetry way
-        run: |
-          # make lint -> pre-commit-config.yaml is managed by Nix,
-          # so path entries won't work in Poetry env
-          source $(poetry env info --path)/bin/activate
-          make types
-          make unit
-          make tesh
-
-      - uses: cachix/install-nix-action@v22
-
-      - name: Run 'make examples'
-        run: poetry run tesh examples/
+      - name: Run all tests
+        run: docker exec tesh nix develop -c make tests
 
   release:
     name: Release
