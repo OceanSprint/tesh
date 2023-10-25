@@ -26,8 +26,8 @@ concurrency:
 
 jobs:
 
-  tests:
-    name: Tests
+  tests_linux:
+    name: Tests on Linux
 
     strategy:
       matrix:
@@ -42,7 +42,7 @@ jobs:
       - uses: cachix/install-nix-action@v22
       - uses: cachix/cachix-action@v12
         with:
-          name: niteo-public
+          name: oceansprint
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Run linters and unit tests the Nix way
@@ -53,8 +53,35 @@ jobs:
           nix build .#packages.x86_64-linux.testEnv-$(echo $PYTHON)
           nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
 
-  docker:
-    name: Docker image verification
+  tests_macos:
+    name: Tests on macOS
+
+    strategy:
+      matrix:
+        python: ["python3.9", "python3.10", "python3.11"]
+
+    runs-on: macos-13
+    steps:
+      - name: Convert matrix python version to nix python version
+        run: echo "PYTHON=$(echo ${{ matrix.python }} | tr -d .)" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v22
+      - uses: cachix/cachix-action@v12
+        with:
+          name: oceansprint
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
+
+      - name: Run linters and unit tests the Nix way
+        run: |
+          nix build .#checks.x86_64-darwin.pre-commit
+          nix build .#devShells.x86_64-darwin.$(echo $PYTHON)
+          nix build .#packages.x86_64-darwin.appEnv-$(echo $PYTHON)
+          nix build .#packages.x86_64-darwin.testEnv-$(echo $PYTHON)
+          nix build .#checks.x86_64-darwin.tests-$(echo $PYTHON)
+
+  docker_linux:
+    name: Docker on Linux
 
     runs-on: ubuntu-latest
     steps:
@@ -72,9 +99,33 @@ jobs:
       - name: Run all tests
         run: docker exec tesh nix develop -c make tests
 
+  docker_macos:
+    name: Docker on macOS
+
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install & start Docker
+        run: |
+          brew install docker colima
+          colima start
+
+      - name: Build Docker image with nix env for tesh development
+        run: docker build -t tesh .
+
+      - name: Start a container
+        run: docker run -d --rm -v .:/tesh --name tesh -it tesh
+
+      - name: Make git happy so that pre-commit checks in `make lint` work
+        run: docker exec tesh git config --global --add safe.directory /tesh
+
+      - name: Run all tests
+        run: docker exec tesh nix develop -c make tests
+
   release:
     name: Release
-    needs: tests
+    needs: [tests_linux, tests_macos]
 
     # To test publishing to testpypi:
     # * comment out "verify git tag matches pyproject.toml version"
@@ -93,7 +144,7 @@ jobs:
       - uses: cachix/install-nix-action@v22
       - uses: cachix/cachix-action@v12
         with:
-          name: niteo-public
+          name: oceansprint
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Verify git tag matches pyproject.toml version

@@ -1,6 +1,11 @@
 {
   description = "TEstable SHell sessions in Markdown";
 
+  nixConfig = {
+    extra-trusted-public-keys = "oceansprint.cachix.org-1:bVOqLd1Vv4KNn7AhqfggmGwDc6GJybMz1gSL7MNEZKA=";
+    extra-substituters = "https://oceansprint.cachix.org";
+  };
+
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-23.05";
     poetry2nix = {
@@ -20,7 +25,7 @@
       imports = [
         inputs.pre-commit-hooks-nix.flakeModule
       ];
-      systems = [ "x86_64-linux" "aarch64-darwin" "aarch64-linux" ];
+      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
       perSystem = { config, self', inputs', pkgs, system, lib, ... }:
 
         let
