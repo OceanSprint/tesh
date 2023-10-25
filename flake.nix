@@ -31,11 +31,11 @@
           supportedPythons = [ "python39" "python310" "python311" ];
           forAllPythons = name: f:
             let
-              attrNames = (map (py: "${name}-${py}") supportedPythons);
+              attrNames = (map (py: if name == "" then "${py}" else "${name}-${py}") supportedPythons);
               outputs = lib.genAttrs supportedPythons
                 (python: f python);
             in
-            lib.mapAttrs' (py: value: { name = "${name}-${py}"; inherit value; }) outputs;
+            lib.mapAttrs' (py: value: { name = (if name == "" then "${py}" else "${name}-${py}"); inherit value; }) outputs;
 
           poetryArgs = python: {
             projectDir = ./.;
@@ -103,7 +103,7 @@
           };
 
           packages =
-            (forAllPythons "default" (python:
+            (forAllPythons "appEnv" (python:
               inputs.poetry2nix.legacyPackages.${system}.mkPoetryApplication (poetryArgs python)))
 
             //
@@ -117,7 +117,7 @@
             (forAllPythons "tests" (python:
               pkgs.runCommand "tests"
                 {
-                  buildInputs = self'.devShells."default-${python}".buildInputs;
+                  buildInputs = self'.devShells."${python}".buildInputs;
                 } ''
                 cp -r ${./.} ./source
                 chmod +w -R ./source
@@ -130,11 +130,11 @@
               ''));
 
           devShells =
-            { default = self'.devShells.default-python311; }
+            { default = self'.devShells.python311; }
 
             //
 
-            (forAllPythons "default" (python:
+            (forAllPythons "" (python:
               let
                 testEnv = self'.packages."testEnv-${python}";
               in

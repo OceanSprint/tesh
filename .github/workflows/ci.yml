@@ -26,8 +26,8 @@ concurrency:
 
 jobs:
 
-  pure_tests:
-    name: Pure Tests
+  tests:
+    name: Tests
 
     strategy:
       matrix:
@@ -47,12 +47,13 @@ jobs:
           PYTHON: ${{ matrix.python }}
         run: |
           nix build .#checks.x86_64-linux.pre-commit
-          nix build .#devShells.x86_64-linux.default-$(echo $PYTHON)
-          nix build .#packages.x86_64-linux.default-$(echo $PYTHON)
+          nix build .#devShells.x86_64-linux.$(echo $PYTHON)
+          nix build .#packages.x86_64-linux.appEnv-$(echo $PYTHON)
+          nix build .#packages.x86_64-linux.testEnv-$(echo $PYTHON)
           nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
 
-  impure_tests:
-    name: Impure Tests
+  docker:
+    name: Docker image verification
 
     runs-on: ubuntu-latest
     steps:
@@ -72,7 +73,7 @@ jobs:
 
   release:
     name: Release
-    needs: [pure_tests, impure_tests]
+    needs: tests
 
     # To test publishing to testpypi:
     # * comment out "verify git tag matches pyproject.toml version"
@@ -95,10 +96,9 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Verify git tag matches pyproject.toml version
-
         run: |
           GIT_VERSION=$GITHUB_REF_NAME
-          POETRY_VERSION=`nix-shell --run "poetry version --short"`
+          POETRY_VERSION=`nix develop -c poetry version --short`
 
           echo $GIT_VERSION
           echo $POETRY_VERSION
@@ -108,7 +108,7 @@ jobs:
 
       - name: Build tesh wheel
         run: |
-          nix-shell --run "poetry build"
+          nix develop -c poetry build
 
       - name: Upload wheel to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

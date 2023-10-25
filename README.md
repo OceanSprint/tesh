@@ -320,13 +320,4 @@ On macOS:
 $ nix develop .#devShells.aarch64-darwin.default-python39
 ```
 
-
-
-# TODO:
-
-* rename packages, so they are not default-python310, etc.
-* docker image
-* commands instead of docker actions
-
-
-* docker build .
+On CI, all supported versions of Python are tested.
