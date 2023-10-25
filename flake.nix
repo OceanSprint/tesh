@@ -41,14 +41,6 @@
             projectDir = ./.;
             preferWheels = true;
             python = pkgs.${python};
-            overrides = inputs'.poetry2nix.legacyPackages.overrides.withDefaults (self: super: {
-
-              ruamel-yaml-clib = super.ruamel-yaml-clib.override (
-                old: {
-                  preferWheel = false;
-                }
-              );
-            });
           };
 
         in
@@ -146,6 +138,14 @@
                   buildInputs = with pkgs; [
                     poetry
                     self'.packages."testEnv-${python}"
+
+                    # remove when XXX merged
+                    autoflake
+                    black
+                    codespell
+                    pkgs.python3Packages.flake8
+                    isort
+                    yamllint
 
                     # test dependency
                     nmap
