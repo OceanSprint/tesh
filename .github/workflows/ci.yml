@@ -31,10 +31,13 @@ jobs:
 
     strategy:
       matrix:
-        python: ["python39", "python310", "python311"]
+        python: ["python3.9", "python3.10", "python3.11"]
 
     runs-on: ubuntu-latest
     steps:
+      - name: Convert matrix python version to nix python version
+        run: echo "PYTHON=$(echo ${{ matrix.python }} | tr -d .)" >> $GITHUB_ENV
+
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v22
       - uses: cachix/cachix-action@v12
@@ -43,8 +46,6 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
 
       - name: Run linters and unit tests the Nix way
-        env:
-          PYTHON: ${{ matrix.python }}
         run: |
           nix build .#checks.x86_64-linux.pre-commit
           nix build .#devShells.x86_64-linux.$(echo $PYTHON)

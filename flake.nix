@@ -139,7 +139,7 @@
                     poetry
                     self'.packages."testEnv-${python}"
 
-                    # remove when XXX merged
+                    # remove when https://github.com/cachix/pre-commit-hooks.nix/issues/356 is merged
                     autoflake
                     black
                     codespell
