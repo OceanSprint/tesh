@@ -8,26 +8,31 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-23.05";
-    poetry2nix = {
-      url = "github:nix-community/poetry2nix";
+    pydev = {
+      url = "github:oceansprint/pydev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    pre-commit-hooks-nix = {
-      url = "github:cachix/pre-commit-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-    };
-
   };
 
   outputs = inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ./flake-module.nix ];
-      systems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
-      pyDev = {
-        supportedPythons = [ "python39" "python310" "python311" ];
-        extraTestDependencies = [ "nmap" ];
+      imports = [ inputs.pydev.flakeModule ];
+      systems = [
+        "aarch64-darwin"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "x86_64-linux"
+      ];
+      pydev = {
+        supportedPythons = [
+          "python39"
+          "python310"
+          "python311"
+        ];
+        extraTestDependencies = [
+          "nmap"
+        ];
       };
-
     };
+
 }
