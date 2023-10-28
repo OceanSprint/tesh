@@ -1,5 +1,12 @@
 ## Changelog
 
+0.3.2 (2023-10-28)
+------------------
+
+* Brown-bag release to fix the release process.
+  [zupo]
+
+
 0.3.1 (2023-10-28)
 ------------------
 
