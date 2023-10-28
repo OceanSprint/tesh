@@ -242,11 +242,11 @@
         "pre-commit-hooks-nix": "pre-commit-hooks-nix"
       },
       "locked": {
-        "lastModified": 1698519196,
-        "narHash": "sha256-YrTH0fqcBuwRhn1cD8JEhf8WzURCP4LcEXqNIqQbmtM=",
+        "lastModified": 1698527212,
+        "narHash": "sha256-THtAx/IYsoVoS69zYEaiEgBtH/dT29uhdTFsvEITxKc=",
         "owner": "oceansprint",
         "repo": "pydev",
-        "rev": "d15424b2635cc15fb3f0ddecbbe1c995f322b3dc",
+        "rev": "1675d2f63752b919152f6c23ba76dd70b4ebdfc7",
         "type": "github"
       },
       "original": {
