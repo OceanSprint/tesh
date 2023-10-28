@@ -1,5 +1,12 @@
 ## Changelog
 
+0.3.1 (2023-10-28)
+------------------
+
+* Fix multiline commands on macOS and NixOS, refs #48, #52.
+  [zupo]
+
+
 0.3.0 (2023-07-28)
 ------------------
 
@@ -7,7 +14,7 @@
   escape sequences, since they are not displayed properly by most of the
   Markdown highlighters, refs #45.
   [garbas]
-s
+
 * Allowing `...` to be used in `PS1` (`tesh-ps1`), refs #45.
   [garbas]
 
