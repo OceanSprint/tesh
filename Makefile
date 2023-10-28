@@ -69,9 +69,13 @@ tesh:
 .PHONY: test
 test: tests
 
+skip_lint = false
 .PHONY: tests
 tests:
+# In `nix flake check` we already have pre-commit as a separate check so we don't need to run it here
+ifeq ($(skip_lint),false)
 	@make lint all=true
+endif
 	@make types
 	@make unit
 	@make tesh
