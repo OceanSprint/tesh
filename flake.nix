@@ -36,11 +36,11 @@
           supportedPythons = [ "python39" "python310" "python311" ];
           forAllPythons = name: f:
             let
-              attrNames = (map (py: if name == "" then "${py}" else "${name}-${py}") supportedPythons);
+              attrNames = (map (py: "${name}${py}") supportedPythons);
               outputs = lib.genAttrs supportedPythons
                 (python: f python);
             in
-            lib.mapAttrs' (py: value: { name = (if name == "" then "${py}" else "${name}-${py}"); inherit value; }) outputs;
+            lib.mapAttrs' (py: value: { name = "${name}${py}"; inherit value; }) outputs;
 
           poetryArgs = python: {
             projectDir = ./.;
@@ -100,18 +100,18 @@
           };
 
           packages =
-            (forAllPythons "appEnv" (python:
+            (forAllPythons "tesh-" (python:
               inputs.poetry2nix.legacyPackages.${system}.mkPoetryApplication (poetryArgs python)))
 
             //
 
-            (forAllPythons "testEnv" (python:
+            (forAllPythons "testEnv-" (python:
               inputs.poetry2nix.legacyPackages.${system}.mkPoetryEnv (poetryArgs python)));
 
           # `make unit` is not needed as it's already run in pre-commit
           # check, registered by flake-parts
           checks =
-            (forAllPythons "tests" (python:
+            (forAllPythons "tests-" (python:
               pkgs.runCommand "tests"
                 {
                   buildInputs = self'.devShells."${python}".buildInputs;

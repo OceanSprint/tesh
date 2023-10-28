@@ -49,7 +49,7 @@ jobs:
         run: |
           nix build .#checks.x86_64-linux.pre-commit
           nix build .#devShells.x86_64-linux.$(echo $PYTHON)
-          nix build .#packages.x86_64-linux.appEnv-$(echo $PYTHON)
+          nix build .#packages.x86_64-linux.tesh-$(echo $PYTHON)
           nix build .#packages.x86_64-linux.testEnv-$(echo $PYTHON)
           nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
 
@@ -76,7 +76,7 @@ jobs:
         run: |
           nix build .#checks.x86_64-darwin.pre-commit
           nix build .#devShells.x86_64-darwin.$(echo $PYTHON)
-          nix build .#packages.x86_64-darwin.appEnv-$(echo $PYTHON)
+          nix build .#packages.x86_64-darwin.tesh-$(echo $PYTHON)
           nix build .#packages.x86_64-darwin.testEnv-$(echo $PYTHON)
           nix build .#checks.x86_64-darwin.tests-$(echo $PYTHON)
 
