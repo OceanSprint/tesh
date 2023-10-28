@@ -26,14 +26,20 @@ concurrency:
 
 jobs:
 
-  tests_linux:
-    name: Tests on Linux
+  tests:
+    name: Tests
 
     strategy:
       matrix:
         python: ["python3.9", "python3.10", "python3.11"]
+        runner: ["ubuntu-latest", "macos-13"]
+        include:
+          - runner: "ubuntu-latest"
+            arch: "x86_64-linux"
+          - runner: "macos-13"
+            arch: "x86_64-darwin"
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Convert matrix python version to nix python version
         run: echo "PYTHON=$(echo ${{ matrix.python }} | tr -d .)" >> $GITHUB_ENV
@@ -47,38 +53,7 @@ jobs:
 
       - name: Run linters and unit tests the Nix way
         run: |
-          nix build .#checks.x86_64-linux.pre-commit
-          nix build .#devShells.x86_64-linux.$(echo $PYTHON)
-          nix build .#packages.x86_64-linux.tesh-$(echo $PYTHON)
-          nix build .#packages.x86_64-linux.testEnv-$(echo $PYTHON)
-          nix build .#checks.x86_64-linux.tests-$(echo $PYTHON)
-
-  tests_macos:
-    name: Tests on macOS
-
-    strategy:
-      matrix:
-        python: ["python3.9", "python3.10", "python3.11"]
-
-    runs-on: macos-13
-    steps:
-      - name: Convert matrix python version to nix python version
-        run: echo "PYTHON=$(echo ${{ matrix.python }} | tr -d .)" >> $GITHUB_ENV
-
-      - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v22
-      - uses: cachix/cachix-action@v12
-        with:
-          name: oceansprint
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN_PUBLIC }}'
-
-      - name: Run linters and unit tests the Nix way
-        run: |
-          nix build .#checks.x86_64-darwin.pre-commit
-          nix build .#devShells.x86_64-darwin.$(echo $PYTHON)
-          nix build .#packages.x86_64-darwin.tesh-$(echo $PYTHON)
-          nix build .#packages.x86_64-darwin.testEnv-$(echo $PYTHON)
-          nix build .#checks.x86_64-darwin.tests-$(echo $PYTHON)
+          nix build .#checks.${{ matrix.arch }}.ci-$(echo $PYTHON)
 
   docker_linux:
     name: Docker on Linux
@@ -125,7 +100,7 @@ jobs:
 
   release:
     name: Release
-    needs: [tests_linux, tests_macos]
+    needs: tests
 
     # To test publishing to testpypi:
     # * comment out "verify git tag matches pyproject.toml version"
