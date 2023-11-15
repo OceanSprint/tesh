@@ -32,12 +32,14 @@ jobs:
     strategy:
       matrix:
         python: ["python3.9", "python3.10", "python3.11"]
-        runner: ["ubuntu-latest", "macos-13"]
+        runner: ["ubuntu-latest"]
         include:
           - runner: "ubuntu-latest"
             arch: "x86_64-linux"
-          - runner: "macos-13"
-            arch: "x86_64-darwin"
+          # macOS runners are expensive, so we only test the latest python version
+          - runner: "macos-latest-xlarge"
+            arch: "aarch64-darwin"
+            python: "python3.11"
 
     runs-on: ${{ matrix.runner }}
     steps:
