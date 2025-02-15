@@ -65,7 +65,12 @@ def test(filename: str, session: ShellSession, verbose: bool, debug: bool) -> No
         shell = spawn(
             "bash --norc --noprofile",
             encoding="utf-8",
-            env={"PS1": "$ ", "PATH": os.environ["PATH"], "HOME": os.getcwd()},
+            env={
+                **os.environ,
+                "PS1": "$ ",
+                "PATH": os.environ["PATH"],
+                "HOME": os.getcwd(),
+            },
             # The (height, width) of the TTY commands run in. 24 is the default.
             # The width needs to be larger than the longest command, as
             # otherwise the command string gets truncated and the shell.expect
